@@ -49,6 +49,7 @@ var latestChatLink;
 var desktopNotificationsEnabled;
 var areWeOnline;
 var unseenTotal;
+var waitForTheirMsg;
 
 $(window).load(() => {
   $('body').css('opacity', 1); // use opacity because setting focus on display: none elements fails
@@ -373,6 +374,7 @@ function resetView() {
   }
   activeChat = null;
   activeProfile = null;
+  clearTimeout(waitForTheirMsg);
   showMenu(false);
   cleanupScanner();
   $('#chatlink-qr-video').hide();
@@ -843,6 +845,13 @@ function showChat(pub) {
   chats[pub].setMyMsgsLastSeenTime();
   setTheirOnlineStatus(pub);
   setDeliveredCheckmarks(pub);
+  waitForTheirMsg = setTimeout(() => {
+    if (key.pub !== pub && $('.msg.their').length === 0 && chats[pub].theirLastSeenTime) {
+      var notif = $('<div>').addClass('notification').attr('id', 'refresh-sorry').text('Not seeing the message they sent? Refresh can help (sorry, working on it!).').hide();
+      $('#message-list').append(notif);
+      notif.slideDown();
+    }
+  }, 5000);
 }
 
 function getIdenticon(pub, width) {
@@ -904,6 +913,7 @@ function addMessage(msg) {
   msgEl.data('time', msg.time);
   msgEl.toggleClass('our', msg.selfAuthored ? true : false);
   msgEl.toggleClass('their', msg.selfAuthored ? false : true);
+  if (!msg.selfAuthored) { $('#refresh-sorry').remove(); clearTimeout(waitForTheirMsg); }
   $("#message-list").append(msgEl); // TODO: jquery insertAfter element with smaller timestamp
 }
 
@@ -927,7 +937,7 @@ function getDisplayName(pub) {
   } else {
     displayName = chats[pub].name;
   }
-  return displayName;
+  return displayName || '';
 }
 
 function newChat(pub, chatLink) {

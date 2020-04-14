@@ -7119,6 +7119,8 @@
 	/**
 	* Private communication channel between two participants ([Gun](https://github.com/amark/gun) public keys). Can be used independently of other Iris stuff.
 	*
+	* Used as a core element of [iris-messenger](https://github.com/irislib/iris-messenger).
+	*
 	* ---
 	*
 	* #### Key-value API
@@ -7342,13 +7344,13 @@
 	      if (pub !== _this2.key.pub) {
 	        // Subscribe to their messages
 	        var theirSecretChannelId = await _this2.getTheirSecretChannelId(pub);
-	        _this2.gun.user(pub).get('chats').get(theirSecretChannelId).get('msgs').map().once(function (data, key) {
+	        _this2.gun.user(pub).get('chats').get(theirSecretChannelId).get('msgs').map().on(function (data, key) {
 	          _this2.messageReceived(callback, data, pub, false, key, pub);
 	        });
 	      }
 	      // Subscribe to our messages
 	      var ourSecretChannelId = await _this2.getOurSecretChannelId(pub);
-	      _this2.user.get('chats').get(ourSecretChannelId).get('msgs').map().once(function (data, key) {
+	      _this2.user.get('chats').get(ourSecretChannelId).get('msgs').map().on(function (data, key) {
 	        _this2.messageReceived(callback, data, pub, true, key, _this2.key.pub);
 	      });
 	    });

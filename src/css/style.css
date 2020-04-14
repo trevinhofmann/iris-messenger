@@ -541,11 +541,15 @@ small {
 }
 
 #enable-notifications-prompt {
+  cursor: pointer;
+  display: none;
+}
+
+#enable-notifications-prompt, .notification {
   background: var(--notify);
   padding: 22px 15px;
-  cursor: pointer;
   overflow-y: hidden;
-  display: none;
+  color: var(--text-color);
 }
 
 #enable-notifications-prompt .title {
@@ -554,7 +558,6 @@ small {
 }
 
 #enable-notifications-prompt a {
-  color: var(--text);
   text-decoration: none;
   color: var(--text-color);
 }
