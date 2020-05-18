@@ -329,13 +329,18 @@ if (!iris.util.isMobile) {
 
 $(document).keyup(function(e) {
   if (e.key === "Escape") { // escape key maps to keycode `27`
-    closeAttachmentsPreview();
+	if ($('#attachment-preview.gallery:visible').length) {
+		closeAttachmentsGallery();
+	} else {
+		closeAttachmentsPreview();
+	}
   }
 });
 
 function openAttachmentsPreview() {
   $('#floating-day-separator').remove();
   var attachmentsPreview = $('#attachment-preview');
+  attachmentsPreview.removeClass('gallery');
   attachmentsPreview.empty();
   var closeBtn = $('<button>').text('Cancel').click(closeAttachmentsPreview);
   attachmentsPreview.append(closeBtn);
@@ -356,28 +361,57 @@ function openAttachmentsPreview() {
   }
 }
 
-function openAttachmentsGallery(msg) {
+function openAttachmentsGallery(msg, event) {
   $('#floating-day-separator').remove();
   var attachmentsPreview = $('#attachment-preview');
   attachmentsPreview.addClass('gallery');
   attachmentsPreview.empty();
-  $('#attachment-preview').one('click', closeAttachmentsPreview);
-  attachmentsPreview.show();
+  attachmentsPreview.fadeIn(100);
+  var left, top, width, img;
 
   if (msg.attachments) {
     msg.attachments.forEach(a => {
       if (a.type.indexOf('image') === 0 && a.data) {
-        var img = $('<img>').attr('src', a.data);
-        attachmentsPreview.append(img);
+        img = $('<img>').attr('src', a.data);
+		if (msg.attachments.length === 1) {
+			var original = $(event.target);
+			left = original.offset().left;
+			top = original.offset().top - $(window).scrollTop();
+			width = original.width();
+			img.css({position: 'fixed', left, top, width});
+			attachmentsPreview.append(img);
+			setTimeout(() => {
+				img.css({width: event.target.naturalWidth, left: '50%', top: '50%'});
+				var marginLeft = Math.round(event.target.naturalWidth / 2) * -1;
+				var marginTop = Math.round(event.target.naturalHeight / 2) * -1;
+				img.css({'margin-left': marginLeft, 'margin-top': marginTop});
+			}, 0);
+		} else {
+			attachmentsPreview.append(img);			
+		}
       }
     })
   }
+  $('#attachment-preview').one('click', () => {
+	  if (left && top && width) {
+		  img.css({left, top, width});
+		  img.css({'margin-left': '', 'margin-top': ''});
+	  }
+	  closeAttachmentsGallery();
+  });
 }
 
 function closeAttachmentsPreview() {
   $('#attachment-preview').hide();
   $('#attachment-preview').removeClass('gallery');
   $('#message-list').show();
+  if (activeChat) {
+    chats[activeChat].attachments = null;
+  }
+}
+
+function closeAttachmentsGallery() {
+  $('#attachment-preview').fadeOut(300);
   if (activeChat) {
     chats[activeChat].attachments = null;
   }
@@ -1106,7 +1140,7 @@ function addMessage(msg, chatId) {
   if (msg.attachments) {
     msg.attachments.forEach(a => {
       if (a.type.indexOf('image') === 0 && a.data) {
-        var img = $('<img>').attr('src', a.data).click(() => { openAttachmentsGallery(msg); });
+        var img = $('<img>').attr('src', a.data).click(e => { openAttachmentsGallery(msg, e); });
         msgContent.prepend(img);
         img.one('load', scrollToMessageListBottom);
       }
