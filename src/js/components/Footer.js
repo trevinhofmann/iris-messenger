@@ -92,7 +92,7 @@ class Footer extends Component {
     }
 
     return html`
-    <header class="visible-xs-flex nav footer">
+    <footer class="visible-xs-flex nav footer">
       <div class="header-content" onClick=${() => localState.get('scrollUp').put(true)}>
         <a href="/" class="btn ${activeRoute && activeRoute === '/' ? 'active' : ''}">${homeIcon}</a>
         <a href="/chat" class="btn ${activeRoute && activeRoute.indexOf('/chat') === 0 ? 'active' : ''}">
@@ -105,7 +105,7 @@ class Footer extends Component {
           <${Identicon} str=${key} width=34 />
         </a>
       </div>
-    </header>`;
+    </footer>`;
   }
 }
 

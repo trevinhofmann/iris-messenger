@@ -5,9 +5,8 @@
 * { box-sizing: border-box; }
 
 html {
-  height:100%;
-  overflow:hidden;
   -webkit-text-size-adjust: 100%;
+  overscroll-behavior: none;
 }
 
 body {
@@ -17,9 +16,8 @@ body {
   font-family: "SF Pro Text", "SF Pro Icons", system, -apple-system, system-ui, system-ui, "Helvetica Neue", Helvetica, "Lucida Grande", sans-serif;
   padding: 0;
   margin: 0;
-  height:100%;
-  overflow:hidden;
   background-color: var(--body-bg);
+  overscroll-behavior: none;
 }
 
 a {
@@ -101,6 +99,21 @@ img {
 .footer a {
   flex: 1;
   text-align: center;
+}
+
+.nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
+
+.header {
+  top: 0;
+}
+
+.footer {
+  bottom: 0;
 }
 
 .nav a {
@@ -239,13 +252,7 @@ img {
 #main-content {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  overflow: hidden;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  padding-top: 55px;
 }
 
 .sidebar {
@@ -262,8 +269,6 @@ img {
 }
 
 .main {
-  height: 100%;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   flex: 3 0 10em;
@@ -345,7 +350,6 @@ header.footer .header-content {
 
 .main-view {
   flex:1;
-  overflow-y: scroll;
   padding: 10px 15px;
   background-color: var(--main-color);
   min-width: 0;
@@ -1217,6 +1221,10 @@ form.public {
 }
 
 @media (max-width: 575px) {
+  #main-content {
+    padding-top: 50px;
+    padding-bottom: 50px;
+  }
   .hidden-xs {
     display: none !important;
   }
