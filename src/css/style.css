@@ -7,9 +7,11 @@
 html {
   -webkit-text-size-adjust: 100%;
   overscroll-behavior: none;
+  height: 100%;
 }
 
 body {
+  height: 100%;
   opacity: 0;
   font-size: 15px;
   color: var(--text-color);
@@ -18,7 +20,6 @@ body {
   margin: 0;
   background-color: var(--body-bg);
   overscroll-behavior: none;
-  padding-top: 55px;
 }
 
 a {
@@ -252,6 +253,7 @@ img {
 
 #main-content {
   display: flex;
+  height: 100%;
   flex-direction: column;
 }
 
@@ -272,6 +274,7 @@ img {
   display: flex;
   flex-direction: column;
   flex: 3 0 10em;
+  padding-top: 55px;
 }
 
 /*----- Main------- */
@@ -461,7 +464,11 @@ header.footer .header-content {
 #chat-view {
   display: flex;
   flex-direction: row;
-  height: 100%;
+  height: calc(100vh - 55px);
+}
+
+#chat-view .main-view {
+  overflow-y: scroll;
 }
 
 #chat-view #message-list {
@@ -1221,9 +1228,12 @@ form.public {
 }
 
 @media (max-width: 575px) {
-  body {
+  .main {
     padding-top: 50px;
     padding-bottom: 50px;
+  }
+  #chat-view {
+    height: calc(100vh - 50px);
   }
   .hidden-xs {
     display: none !important;
