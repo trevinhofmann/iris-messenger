@@ -18,6 +18,7 @@ body {
   margin: 0;
   background-color: var(--body-bg);
   overscroll-behavior: none;
+  padding-top: 55px;
 }
 
 a {
@@ -252,7 +253,6 @@ img {
 #main-content {
   display: flex;
   flex-direction: column;
-  padding-top: 55px;
 }
 
 .sidebar {
@@ -1221,7 +1221,7 @@ form.public {
 }
 
 @media (max-width: 575px) {
-  #main-content {
+  body {
     padding-top: 50px;
     padding-bottom: 50px;
   }
