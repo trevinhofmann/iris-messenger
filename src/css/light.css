@@ -10,7 +10,7 @@
     --chat-hover: #f3f3f3;
     --msg-content-background: #ffffff;
     --our-msg: #d7f7c5;
-    --notify: #9ee8ff;
+    --notify: #9ee0ff;
     --warning-background: #ffa09e;
     --login-background: #F2A51F;
     --seen-indicator: rgba(0, 0, 0, 0.45);
@@ -19,18 +19,18 @@
     --input-placeholder: #a9a9a9;
     --small-text-color: #777;
     --msg-form-button-color: #999;
-    --button-bg: #ddd;
-    --button-color: #262626;
+    --button-bg: #e0cc81;
+    --button-color: #333333;
     --button-border: 0;
     --button-border-size: 0;
-    --button-hover-bg: #ccc;
+    --button-hover-bg: #d8c073;
     --sidebar-bg: #fff;
     --sidebar-border-right: 1px solid #dfdfdf;
     --zebra-stripe-bg: rgba(255,255,255,0.5);
     --emoji-picker-bg: #FFFFFF;
     --emoji-picker-color: #777;
     --emoji-picker-border-color: #CCCCCC;
-    --link-color: #00a0d1;
+    --link-color: #008ed1;
     --day-separator-bg: rgba(227, 249, 255, 0.91);
     --day-separator-color: rgba(74, 74, 74, 0.88);
 }
