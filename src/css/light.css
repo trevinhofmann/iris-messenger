@@ -1,18 +1,18 @@
 /* light.css: 👉 dark-on-light */
 :root {
     --body-bg: #fff;
-    --text-color: #262626;
+    --text-color: #333333;
     --text-time: rgba(0, 0, 0, 0.45);
-    --main-color: #e5ddd5;
+    --main-color: #f2ede0;
     --gallery-background: rgba(255, 255, 255, 0.90);
-    --header-color: #efefef;
+    --header-color: #fcf7e9;
     --chat-active: #eaeaea;
     --chat-hover: #f3f3f3;
     --msg-content-background: #ffffff;
     --our-msg: #d7f7c5;
     --notify: #9ee8ff;
     --warning-background: #ffa09e;
-    --login-background: #70d4f2;
+    --login-background: #F2A51F;
     --seen-indicator: rgba(0, 0, 0, 0.45);
     --input-bg: #fff;
     --input-text: #262626;

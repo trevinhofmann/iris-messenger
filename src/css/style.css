@@ -1,3 +1,12 @@
+@font-face {
+  font-family: 'Oswald';
+  font-weight: 500;
+  font-style: normal;
+  src: local('Oswald'),
+       local('Oswald Medium'),
+       url('../font/Oswald-Medium.woff') format('woff')
+}
+
 :root {
   color-scheme: light dark;
 }
@@ -14,12 +23,17 @@ body {
   opacity: 0;
   font-size: 15px;
   color: var(--text-color);
-  font-family: "SF Pro Text", "SF Pro Icons", system, -apple-system, system-ui, system-ui, "Helvetica Neue", Helvetica, "Lucida Grande", sans-serif;
+  font-family: "Open Sans", sans-serif;
   padding: 0;
   margin: 0;
   height:100%;
   overflow:hidden;
   background-color: var(--body-bg);
+}
+
+h1 {
+  font-family: "Oswald", sans-serif;
+  font-weight: 500;
 }
 
 a {
@@ -107,6 +121,11 @@ img {
   user-select: none;
 }
 
+.nav a.logo:hover {
+  text-decoration: none;
+  opacity: 0.8;
+}
+
 .nav a.logo {
   display: flex;
   align-items: center;
@@ -123,6 +142,11 @@ img {
 
 .nav a.logo img:last-child {
   filter: var(--logotype-filter);
+}
+
+.nav a.logo h1 {
+  color: #333333;
+  font-size: 1.5em;
 }
 
 .header .header-content > a:not(:last-child) {

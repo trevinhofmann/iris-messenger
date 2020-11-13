@@ -74,8 +74,8 @@ class Login extends Component {
       <div id="login-content">
         <form id="login-form" autocomplete="off" onSubmit=${e => onLoginFormSubmit(e)}>
           <div id="create-account">
-            <img style="width: 86px" src="img/android-chrome-192x192.png" alt="Iris"/>
-            <h1>Iris</h1>
+            <img style="width: 150px" src="img/dogecoin-300.png" alt="Doge Chat"/>
+            <h1>DOGE CHAT</h1>
             <input onInput=${e => onNameChange(e)} autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="off" id="login-form-name" type="text" name="name" placeholder="${t('whats_your_name')}"/>
             <p><button id="sign-up" type="submit">${t('new_user_go')}</button></p>
             <br/>
