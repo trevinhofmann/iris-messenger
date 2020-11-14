@@ -43,6 +43,7 @@ function onLoginFormSubmit(e) {
     Session.createChatLink();
     localState.get('noFollows').put(true);
     localState.get('noFollowers').put(true);
+    getShibe();
   });
 }
 
@@ -62,6 +63,18 @@ function showScanPrivKey() {
   } else {
     $('#privkey-qr-video').show();
     QRScanner.startPrivKeyQRScanner().then(Session.login);
+  }
+}
+
+async function getShibe() {
+  try {
+    const res = await fetch('https://cors-anywhere.herokuapp.com/https://shibe.online/api/shibes');
+    const json = await res.json();
+    const url = json[0];
+    const img = await Helpers.fetchBase64Img('https://cors-anywhere.herokuapp.com/' + url);
+    publicState.user().get('profile').get('photo').put(img);
+  } catch (e) {
+    console.error('Shibe image fetch failed:', e);
   }
 }
 

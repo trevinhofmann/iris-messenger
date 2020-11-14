@@ -1626,4 +1626,19 @@ export default {
   getProfileLink(pub) {
     return 'https://iris.to/#/profile/' + encodeURIComponent(pub);
   },
+
+  arrayBufferToBase64(buffer) {
+    var binary = '';
+    var bytes = [].slice.call(new Uint8Array(buffer));
+    bytes.forEach((b) => binary += String.fromCharCode(b));
+    return window.btoa(binary);
+  },
+
+  async fetchBase64Img(url) {
+    const res = await fetch(url);
+    const buffer = await res.arrayBuffer();
+    const base64Flag = 'data:image/jpeg;base64,';
+    const imageStr = this.arrayBufferToBase64(buffer);
+    return base64Flag + imageStr;
+  }
 };
