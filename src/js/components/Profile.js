@@ -16,6 +16,8 @@ import Identicon from './Identicon.js';
 import Name from './Name.js';
 import SearchBox from './SearchBox.js';
 
+const ADVISOR = "pob0gXfno-qves2A26QP8n19VapsatP_nIkEMtY_jaw.MZ9M17cGjzJnmXbGYzu8v7gMCdx_Mgg-yghwudlNyxE";
+
 class Profile extends Component {
   constructor() {
     super();
@@ -61,7 +63,13 @@ class Profile extends Component {
       return html`
         <div class="msg">
           <div class="msg-content">
-            <p>Share your profile link so ${this.state.name || 'this user'} can follow you:</p>
+            <div class="msg-sender">
+              <a class="msg-sender-link" href=${'/profile/' + ADVISOR}>
+                <${Identicon} width=40 str=${ADVISOR}/>
+                <small class="msgSenderName"><iris-profile-attribute pub=${ADVISOR}/></small>
+              </a>
+            </div>
+            Share your profile link so ${this.state.name || 'this user'} can follow you:
             <p><${CopyButton} text=${t('copy_link')} title=${Session.getMyName()} copyStr=${Helpers.getProfileLink(Session.getPubKey())}/></p>
             <small>Your posts, replies and likes are only shown to your followers and their network.</small>
           </div>

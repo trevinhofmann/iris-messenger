@@ -10,7 +10,15 @@ import MessageFeed from './MessageFeed.js';
 import Session from '../Session.js';
 import {translate as t} from '../Translation.js';
 
-const SUGGESTED_FOLLOW = 'hyECQHwSo7fgr2MVfPyakvayPeixxsaAWVtZ-vbaiSc.TXIp8MnCtrnW6n2MrYquWPcc-DTmZzMBmc2yaGv9gIU';
+const ADVISOR = "pob0gXfno-qves2A26QP8n19VapsatP_nIkEMtY_jaw.MZ9M17cGjzJnmXbGYzu8v7gMCdx_Mgg-yghwudlNyxE";
+const SUGGESTED_FOLLOW = ADVISOR;
+
+const adviceDoge = html`<div class="msg-sender">
+  <a class="msg-sender-link" href=${'/profile/' + ADVISOR}>
+    <${Identicon} width=40 str=${ADVISOR}/>
+    <small class="msgSenderName"><iris-profile-attribute pub=${ADVISOR}/></small>
+  </a>
+</div>`;
 
 class FeedView extends Component {
   constructor() {
@@ -71,14 +79,15 @@ class FeedView extends Component {
       return html`
         <div class="msg">
           <div class="msg-content">
-            <p>${t('follow_someone_info')}</p>
-            <div class="profile-link-container">
+            ${adviceDoge}
+            ${t('follow_someone_info')}
+            <p class="profile-link-container">
               <a href="/profile/${SUGGESTED_FOLLOW}" class="profile-link">
                 <${Identicon} str=${SUGGESTED_FOLLOW} width=40 />
-                ${t('creator_of_this_distribution')}
+                <iris-profile-attribute pub=${SUGGESTED_FOLLOW}/>
               </a>
               <${FollowButton} id=${SUGGESTED_FOLLOW} />
-            </div>
+            </p>
             <p>${t('alternatively')} <a href="/profile/${Session.getPubKey()}">${t('give_your_profile_link_to_someone')}</a>.</p>
           </div>
         </div>
@@ -88,7 +97,8 @@ class FeedView extends Component {
       return html`
         <div class="msg">
           <div class="msg-content">
-            <p>${t('no_followers_yet')}</p>
+            ${adviceDoge}
+            ${t('no_followers_yet')}
             <p><${CopyButton} text=${t('copy_link')} copyStr=${Helpers.getProfileLink(Session.getPubKey())}/></p>
             <small>${t('no_followers_yet_info')}</small>
           </div>
