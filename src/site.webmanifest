@@ -1,6 +1,6 @@
 {
-    "name": "Doge Chat",
-    "short_name": "Doge Chat",
+    "name": "Dogechat",
+    "short_name": "Dogechat",
     "icons": [
         {
             "src": "img/android-chrome-192x192.png",

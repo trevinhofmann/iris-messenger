@@ -74,7 +74,7 @@ class Settings extends Component {
           <button id="restore-default-rtc-config">${t('restore_defaults')}</button>
           <hr/>
           <h3>${t('about')}</h3>
-          <p>Iris is like the social networking apps we're used to, but better.</p>
+          <p>Dogechat is like the social networking apps we're used to, but better.</p>
           <ul>
             <li><b>No phone number or signup required.</b> Just type in your name or alias and go!</li>
             <li><b>Secure</b>: It's open source. Users can validate that big brother doesn't read your private messages.</li>
@@ -101,9 +101,9 @@ class Settings extends Component {
           <h4>Privacy</h4>
           <p>Private messages are end-to-end encrypted, but message timestamps and the number of chats aren't. In a decentralized network this information is potentially available to anyone.</p>
           <p>By looking at timestamps in chats, it is possible to guess who are chatting with each other. There are potential technical solutions to hiding the timestamps, but they are not implemented yet. It is also possible, if not trivial, to find out who are communicating with each other by monitoring data subscriptions on the decentralized database.</p>
-          <p>In that regard, Iris prioritizes decentralization and availability over perfect privacy.</p>
+          <p>In that regard, Dogechat prioritizes decentralization and availability over perfect privacy.</p>
           <p>Profile names, photos and online status are currently public. That can be changed when advanced group permissions are developed.</p>
-          <p>Iris makes no guarantees of data persistence.</p>
+          <p>Dogechat makes no guarantees of data persistence.</p>
           <p>${t('application_security_warning')}</p>
 
           <h4>Donate</h4>

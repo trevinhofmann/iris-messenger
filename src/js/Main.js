@@ -49,7 +49,7 @@ PublicMessages.init();
 Helpers.checkColorScheme();
 
 function handleRoute(e) {
-  document.title = 'Doge Chat';
+  document.title = 'Dogechat';
   activeRoute = e.url;
   if (!activeRoute && window.location.hash) {
     return route(window.location.hash.replace('#', '')); // bubblegum fix back navigation

@@ -118,7 +118,7 @@ class Header extends Component {
       <div class="header-content">
         <a href="/" onClick=${() => {$('a.logo').blur();localState.get('scrollUp').put(true)}} tabindex="0" class="${activeRoute && activeRoute.indexOf('/chat/') === 0 ? 'hidden-xs' :'' } logo">
           <img src="img/dogecoin-300.png" width=40 height=40/>
-          <h1 class="hidden-xs">DOGE CHAT</h1>
+          <h1 class="hidden-xs">DOGECHAT</h1>
         </a>
         <div class="text" style=${this.chatId ? 'cursor:pointer' : ''} onClick=${() => this.onTitleClicked()}>
           ${this.state.title && activeRoute && activeRoute.indexOf('/chat/') === 0 ? html`
