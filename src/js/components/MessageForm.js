@@ -27,9 +27,12 @@ class MessageForm extends Component {
     }
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps, prevState) {
     if (!iris.util.isMobile && this.props.autofocus !== false) {
       $(this.base).find(".new-msg").focus();
+    }
+    if (this.state.torrentId && this.state.torrentId !== prevState.torrentId) {
+      this.downloadWebtorrent(this.state.torrentId);
     }
   }
 
@@ -48,6 +51,9 @@ class MessageForm extends Component {
     if (chat.attachments) {
       msg.attachments = chat.attachments;
     }
+    if (this.state.torrentId) {
+      msg.torrentId = this.state.torrentId;
+    }
     chat.send(msg);
     this.closeAttachmentsPreview();
     textEl.val('');
@@ -65,6 +71,34 @@ class MessageForm extends Component {
   setTextareaHeight(textarea) {
     textarea.style.height = "";
     textarea.style.height = event.target.scrollHeight + "px";
+  }
+
+  downloadWebtorrent(torrentId) {
+    console.log('trying to open webtorrent', torrentId);
+    function onTorrent(torrent) {
+      // Torrents can contain many files. Let's use the .mp4 file
+      var file = torrent.files.find(function (file) {
+        return file.name.endsWith('.mp4')
+      })
+      // Stream the file in the browser
+      file.appendTo('#webtorrent', {autoplay: true, muted: true})
+    }
+    const client = Helpers.getWebTorrentClient();
+    const existing = client.get(torrentId);
+    if (existing) {
+      onTorrent(existing);
+    } else {
+      client.add(torrentId, onTorrent);
+    }
+  }
+
+  onMsgTextPaste(event) {
+    const pasted = (event.clipboardData || window.clipboardData).getData('text');
+    const magnetRegex = /^magnet:\?xt=urn:btih:*/;
+    if (pasted !== this.state.torrentId && pasted.indexOf('.torrent') > -1 || pasted.match(magnetRegex)) {
+      event.preventDefault();
+      this.setState({torrentId: pasted});
+    }
   }
 
   onMsgTextInput(event) {
@@ -180,9 +214,10 @@ class MessageForm extends Component {
     return html`<form autocomplete="off" class="message-form ${this.props.class || ''} ${isPublic ? 'public' : ''}" onSubmit=${e => this.onMsgFormSubmit(e)}>
       ${isPublic ? '' : contentBtns}
       <input name="attachment-input" type="file" class="hidden attachment-input" accept="image/*" multiple onChange=${() => this.openAttachmentsPreview()}/>
-      <${isPublic ? 'textarea' : 'input'} onInput=${e => this.onMsgTextInput(e)} class="new-msg" type="text" placeholder="${t('type_a_message')}" autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="off"/>
+      <${isPublic ? 'textarea' : 'input'} onPaste=${e => this.onMsgTextPaste(e)} onInput=${e => this.onMsgTextInput(e)} class="new-msg" type="text" placeholder="${t('type_a_message')}" autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="off"/>
       ${isPublic ? html`<div>${contentBtns} ${submitButton}</div>` : submitButton}
       ${isPublic ? html`<div class="attachment-preview" style="display:none"></div>` : ''}
+      <div id="webtorrent"></div>
     </form>`;
   }
 

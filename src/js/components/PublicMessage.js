@@ -56,6 +56,9 @@ class PublicMessage extends Message {
           this.setState({replies: Object.keys(this.replies).length, sortedReplies });
         });
       });
+      if (msg.torrentId) {
+        this.downloadWebtorrent(msg.torrentId);
+      }
     });
   }
 
@@ -79,6 +82,32 @@ class PublicMessage extends Message {
         }
       });
       this.linksDone = true;
+    }
+  }
+
+  getWebtorrentElementId() {
+    return 'w' + this.props.hash.replaceAll(/[\+\=\/]/g, '').slice(0,12);
+  }
+
+  downloadWebtorrent(torrentId) {
+    console.log('trying to open webtorrent', torrentId);
+    const onTorrent = (torrent) => {
+      const onTorrentReady = () => {
+        // Torrents can contain many files. Let's use the .mp4 file
+        var file = torrent.files.find(function (file) {
+          return file.name.endsWith('.mp4')
+        })
+        // Stream the file in the browser
+        setTimeout(() => file.appendTo('#' + this.getWebtorrentElementId(), {autoplay: true, muted: true}), 0);
+      }
+      torrent.ready ? onTorrentReady() : torrent.on('ready', onTorrentReady);
+    }
+    const client = Helpers.getWebTorrentClient();
+    const existing = client.get(torrentId);
+    if (existing) {
+      onTorrent(existing);
+    } else {
+      client.add(torrentId, onTorrent);
     }
   }
 
@@ -143,6 +172,7 @@ class PublicMessage extends Message {
               </div>
             `: ''}
           </div>
+          <div id=${this.getWebtorrentElementId()}/>
           ${this.state.msg.attachments && this.state.msg.attachments.map(a =>
             html`<div class="img-container"><img src=${a.data} onclick=${e => { this.openAttachmentsGallery(e); }}/></div>` // TODO: escape a.data
           )}
