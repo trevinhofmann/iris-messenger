@@ -24,8 +24,8 @@ function newChat(pub, chatLink) {
 
 function followChatLink(str) {
   if (str && str.indexOf('http') === 0) {
-    if (str.indexOf('https://iris.to/#/') === 0) {
-      route(str.replace('https://iris.to/#', ''));
+    if (str.indexOf('https://dogech.at/#/') === 0) {
+      route(str.replace('https://dogech.at/#', ''));
       return true;
     } else if (str.length > 30) {
       const s = str.split('?');

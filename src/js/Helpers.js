@@ -1631,7 +1631,7 @@ export default {
   },
 
   getProfileLink(pub) {
-    return 'https://iris.to/#/profile/' + encodeURIComponent(pub);
+    return 'https://dogech.at/#/profile/' + encodeURIComponent(pub);
   },
 
   arrayBufferToBase64(buffer) {

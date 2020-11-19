@@ -237,7 +237,7 @@ class Profile extends Component {
                 ${followable ? html`<${FollowButton} id=${this.props.id}/>` : ''}
                 <button onClick=${() => route('/chat/' + this.props.id)}>${t('send_message')}</button>
                 ${uuid ? '' : html`
-                  <${CopyButton} text=${t('copy_link')} title=${this.state.name} copyStr=${'https://iris.to/' + window.location.hash}/>
+                  <${CopyButton} text=${t('copy_link')} title=${this.state.name} copyStr=${'https://dogech.at/' + window.location.hash}/>
                 `}
                 <button onClick=${() => $('#profile-page-qr').toggle()}>${t('show_qr_code')}</button>
                 ${this.isMyProfile ? '' : html`
@@ -411,7 +411,7 @@ class Profile extends Component {
     }
     qrCodeEl.empty();
     new QRCode(qrCodeEl[0], {
-      text: 'https://iris.to/' + window.location.hash,
+      text: 'https://dogech.at/' + window.location.hash,
       width: 300,
       height: 300,
       colorDark : "#000000",

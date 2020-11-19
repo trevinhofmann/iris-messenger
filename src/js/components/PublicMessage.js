@@ -76,9 +76,9 @@ class PublicMessage extends Message {
     if (this.state.msg && !this.linksDone) {
       $(this.base).find('a').off().on('click', e => {
         const href = $(e.target).attr('href');
-        if (href && href.indexOf('https://iris.to/') === 0) {
+        if (href && href.indexOf('https://dogech.at/') === 0) {
           e.preventDefault();
-          window.location = href.replace('https://iris.to/', '');
+          window.location = href.replace('https://dogech.at/', '');
         }
       });
       this.linksDone = true;
