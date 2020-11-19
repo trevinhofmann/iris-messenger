@@ -111,6 +111,7 @@ img, video {
 .msg-content video, .message-form video {
   width: 100%;
   outline: none;
+  margin-bottom: 15px;
 }
 
 .hidden {
