@@ -7,7 +7,7 @@ import Session from '../Session.js';
 import Fuse from '../lib/fuse.basic.esm.min.js';
 import { followChatLink } from '../Chat.js';
 
-const suggestedFollow = 'hyECQHwSo7fgr2MVfPyakvayPeixxsaAWVtZ-vbaiSc.TXIp8MnCtrnW6n2MrYquWPcc-DTmZzMBmc2yaGv9gIU';
+const suggestedFollow = 'pob0gXfno-qves2A26QP8n19VapsatP_nIkEMtY_jaw.MZ9M17cGjzJnmXbGYzu8v7gMCdx_Mgg-yghwudlNyxE';
 
 class SearchBox extends Component {
   constructor() {
