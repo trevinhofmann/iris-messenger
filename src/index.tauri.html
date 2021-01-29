@@ -1,0 +1,355 @@
+<!DOCTYPE html><html><head><script>// polyfills
+if (!String.prototype.startsWith) {
+  String.prototype.startsWith = function (searchString, position) {
+    position = position || 0
+    return this.substr(position, searchString.length) === searchString
+  }
+}
+
+;(function () {
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1)
+  }
+
+  var uid = function () {
+    return (
+      s4() +
+      s4() +
+      '-' +
+      s4() +
+      '-' +
+      s4() +
+      '-' +
+      s4() +
+      '-' +
+      s4() +
+      s4() +
+      s4()
+    )
+  }
+
+  function ownKeys(object, enumerableOnly) {
+    var keys = Object.keys(object)
+    if (Object.getOwnPropertySymbols) {
+      var symbols = Object.getOwnPropertySymbols(object)
+      if (enumerableOnly)
+        symbols = symbols.filter(function (sym) {
+          return Object.getOwnPropertyDescriptor(object, sym).enumerable
+        })
+      keys.push.apply(keys, symbols)
+    }
+    return keys
+  }
+
+  function _objectSpread(target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i] != null ? arguments[i] : {}
+      if (i % 2) {
+        ownKeys(source, true).forEach(function (key) {
+          _defineProperty(target, key, source[key])
+        })
+      } else if (Object.getOwnPropertyDescriptors) {
+        Object.defineProperties(
+          target,
+          Object.getOwnPropertyDescriptors(source)
+        )
+      } else {
+        ownKeys(source).forEach(function (key) {
+          Object.defineProperty(
+            target,
+            key,
+            Object.getOwnPropertyDescriptor(source, key)
+          )
+        })
+      }
+    }
+    return target
+  }
+
+  function _defineProperty(obj, key, value) {
+    if (key in obj) {
+      Object.defineProperty(obj, key, {
+        value: value,
+        enumerable: true,
+        configurable: true,
+        writable: true
+      })
+    } else {
+      obj[key] = value
+    }
+    return obj
+  }
+
+  if (!window.__TAURI__) {
+    window.__TAURI__ = {}
+  }
+
+  window.__TAURI__.transformCallback = function transformCallback(
+    callback,
+    once
+  ) {
+    var identifier = uid()
+
+    window[identifier] = function (result) {
+      if (once) {
+        delete window[identifier]
+      }
+
+      return callback && callback(result)
+    }
+
+    return identifier
+  }
+
+  window.__TAURI__.promisified = function promisified(args) {
+    var _this = this
+
+    return new Promise(function (resolve, reject) {
+      var callback = _this.transformCallback(function (r) {
+        resolve(r)
+        delete window[error]
+      }, true)
+      var error = _this.transformCallback(function (e) {
+        reject(e)
+        delete window[callback]
+      }, true)
+
+      window.__TAURI_INVOKE_HANDLER__(
+        _objectSpread(
+          {
+            callback: callback,
+            error: error
+          },
+          args
+        )
+      )
+    })
+  }
+
+  window.__TAURI__.loadAsset = function loadAsset(assetName, assetType) {
+    return this.promisified({
+      cmd: 'loadAsset',
+      asset: assetName,
+      assetType: assetType || 'unknown'
+    })
+  }
+
+  document.addEventListener(
+    'error',
+    function (e) {
+      var target = e.target
+      while (target != null) {
+        if (
+          target.matches
+            ? target.matches('img')
+            : target.msMatchesSelector('img')
+        ) {
+          window.__TAURI__.loadAsset(target.src, 'image').then(function (img) {
+            target.src = img
+          })
+          break
+        }
+        target = target.parentElement
+      }
+    },
+    true
+  )
+
+  // open <a href="..."> links with the Tauri API
+  function __openLinks() {
+    document.querySelector('body').addEventListener(
+      'click',
+      function (e) {
+        var target = e.target
+        while (target != null) {
+          if (
+            target.matches ? target.matches('a') : target.msMatchesSelector('a')
+          ) {
+            if (
+              target.href &&
+              target.href.startsWith('http') &&
+              target.target === '_blank'
+            ) {
+              window.__TAURI_INVOKE_HANDLER__({
+                cmd: 'open',
+                uri: target.href
+              })
+              e.preventDefault()
+            }
+            break
+          }
+          target = target.parentElement
+        }
+      },
+      true
+    )
+  }
+
+  if (
+    document.readyState === 'complete' ||
+    document.readyState === 'interactive'
+  ) {
+    __openLinks()
+  } else {
+    window.addEventListener(
+      'DOMContentLoaded',
+      function () {
+        __openLinks()
+      },
+      true
+    )
+  }
+
+  let permissionSettable = false
+  let permissionValue = 'default'
+
+  function isPermissionGranted() {
+    if (window.Notification.permission !== 'default') {
+      return Promise.resolve(window.Notification.permission === 'granted')
+    }
+    return window.__TAURI__.promisified({
+      cmd: 'isNotificationPermissionGranted'
+    })
+  }
+
+  function setNotificationPermission(value) {
+    permissionSettable = true
+    window.Notification.permission = value
+    permissionSettable = false
+  }
+
+  function requestPermission() {
+    return window.__TAURI__
+      .promisified({
+        cmd: 'requestNotificationPermission'
+      })
+      .then(function (permission) {
+        setNotificationPermission(permission)
+        return permission
+      })
+  }
+
+  function sendNotification(options) {
+    if (typeof options === 'object') {
+      Object.freeze(options)
+    }
+
+    isPermissionGranted().then(function (permission) {
+      if (permission) {
+        return window.__TAURI__.promisified({
+          cmd: 'notification',
+          options:
+            typeof options === 'string'
+              ? {
+                  title: options
+                }
+              : options
+        })
+      }
+    })
+  }
+
+  window.Notification = function (title, options) {
+    var opts = options || {}
+    sendNotification(
+      Object.assign(opts, {
+        title: title
+      })
+    )
+  }
+
+  window.Notification.requestPermission = requestPermission
+
+  Object.defineProperty(window.Notification, 'permission', {
+    enumerable: true,
+    get: function () {
+      return permissionValue
+    },
+    set: function (v) {
+      if (!permissionSettable) {
+        throw new Error('Readonly property')
+      }
+      permissionValue = v
+    }
+  })
+
+  isPermissionGranted().then(function (response) {
+    if (response === null) {
+      setNotificationPermission('default')
+    } else {
+      setNotificationPermission(response ? 'granted' : 'denied')
+    }
+  })
+
+  window.alert = function (message) {
+    window.__TAURI_INVOKE_HANDLER__({
+      cmd: 'messageDialog',
+      message: message
+    })
+  }
+
+  window.confirm = function (message) {
+    return window.__TAURI__.promisified({
+      cmd: 'askDialog',
+      message: message
+    })
+  }
+})()
+</script>
+  <title>Iris</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Social Networking Freedom">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta property="og:title" content="Iris">
+  <meta property="og:description" content="Social Networking Freedom">
+  <meta property="og:url" content="https://iris.to">
+  <meta property="og:image" content="https://iris.to/img/cover.jpg">
+  
+  <meta name="twitter:card" content="summary">
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./img/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./img/favicon-16x16.png">
+  <link rel="manifest" href="./site.webmanifest">
+  <link rel="mask-icon" href="./img/safari-pinned-tab.svg" color="#74d5f1">
+  <link rel="shortcut icon" href="./favicon.ico">
+  <meta name="msapplication-TileColor" content="#74d5f1">
+  <meta name="msapplication-config" content="./browserconfig.xml">
+  <meta name="theme-color" content="#74d5f1">
+
+  <link rel="stylesheet" type="text/css" href="./css/cropper.min.css">
+
+  <link rel="stylesheet" href="./css/dark.css" media="(prefers-color-scheme: dark)">
+  <link rel="stylesheet" href="./css/light.css" media="(prefers-color-scheme: no-preference), (prefers-color-scheme: light)">
+  <!-- The main stylesheet -->
+  <link rel="stylesheet" type="text/css" href="./css/style.css">
+<meta http-equiv="Content-Security-Policy" content="default-src blob: data: filesystem: ws: wss: http: https: 'unsafe-eval' 'unsafe-inline'"></head>
+
+<body>
+  <script src="./js/lib/jquery.js"></script>
+  <script src="./js/lib/cropper.min.js"></script>
+  <script src="./js/lib/pica.min.js"></script>
+  <script src="./js/lib/underscore-min.js"></script>
+  <script src="./js/lib/gun.js"></script>
+  <script src="./js/lib/open.js"></script>
+  <script src="./js/lib/sea.js"></script>
+  <script src="./js/lib/nts.js"></script>
+  <script src="./js/lib/radix.js"></script>
+  <script src="./js/lib/radisk.js"></script>
+  <script src="./js/lib/store.js"></script>
+  <script src="./js/lib/rindexed.js"></script>
+  <script src="./js/lib/iris.js"></script>
+  <script src="./js/lib/emoji-button.js"></script>
+  <script src="./js/lib/Autolinker.min.js"></script>
+  <script src="./js/lib/qrcode.min.js"></script>
+  <script src="./js/lib/qr.zxing.js"></script>
+  <script src="./js/lib/webtorrent.min.js"></script>
+  <script type="module" src="./js/Main.js"></script>
+
+
+
+</body></html>
