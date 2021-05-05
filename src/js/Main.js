@@ -1,3 +1,5 @@
+import iris from 'iris-lib';
+
 import { render } from './lib/preact.js';
 import { Router, route } from './lib/preact-router.es.js';
 import { createHashHistory } from './lib/history.production.min.js';
@@ -35,15 +37,18 @@ import Icons from './Icons.js';
 
 const userAgent = navigator.userAgent.toLowerCase();
 const isElectron = (userAgent.indexOf(' electron/') > -1);
+
+/*
 if (!isElectron && ('serviceWorker' in navigator)) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('serviceworker.js')
+    navigator.serviceWorker.register(new URL('../serviceworker.js', import.meta.url))
     .catch(function(err) {
       // registration failed :(
       console.log('ServiceWorker registration failed: ', err);
     });
   });
 }
+*/
 
 State.init();
 Session.init({autologin: window.location.hash.length > 2});

@@ -6,6 +6,7 @@ import Helpers from '../Helpers.js';
 import Session from '../Session.js';
 import SafeImg from './SafeImg.js';
 import Torrent from './Torrent.js';
+import $ from 'jquery';
 
 function twice(f) {
   f();

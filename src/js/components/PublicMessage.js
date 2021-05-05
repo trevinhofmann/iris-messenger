@@ -7,6 +7,7 @@ import { route } from '../lib/preact-router.es.js';
 import Message from './Message.js';
 import Session from '../Session.js';
 import Torrent from './Torrent.js';
+import Autolinker from 'autolinker';
 
 const autolinker = new Autolinker({ stripPrefix: false, stripTrailingSlash: false});
 

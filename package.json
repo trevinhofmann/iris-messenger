@@ -4,10 +4,21 @@
   "author": "Martti Malmi <sirius@iki.fi>",
   "license": "MIT",
   "devDependencies": {
+    "@parcel/packager-raw-url": "2.0.0-beta.2",
+    "@parcel/transformer-webmanifest": "2.0.0-beta.2",
     "eslint": "^7.4.0",
-    "http-server": "^0.12.1"
+    "http-server": "^0.12.1",
+    "parcel": "^2.0.0-beta.2"
   },
   "scripts": {
+    "build": "parcel src/index.html",
     "start": "echo 'Iris: http://localhost:8080'; npx http-server src --silent"
+  },
+  "dependencies": {
+    "autolinker": "^3.14.3",
+    "gun": "https://github.com/amark/gun",
+    "iris-lib": "https://github.com/irislib/iris-lib",
+    "jquery": "^3.6.0",
+    "lodash": "^4.17.21"
   }
 }

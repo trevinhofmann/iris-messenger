@@ -1,6 +1,8 @@
 import State from './State.js';
 import Helpers from './Helpers.js';
 import Session from './Session.js';
+import iris from 'iris-lib';
+import _ from 'lodash';
 
 var MAX_PEER_LIST_SIZE = 10;
 const ELECTRON_GUN_URL = 'http://localhost:8767/gun';

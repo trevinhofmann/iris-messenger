@@ -1,4 +1,14 @@
+import Gun from 'gun';
+import 'gun/sea';
+import 'gun/nts';
+import 'gun/lib/open';
+import 'gun/lib/radix';
+import 'gun/lib/radisk';
+import 'gun/lib/store';
+import 'gun/lib/rindexed';
+
 import PeerManager from './PeerManager.js';
+import iris from 'iris-lib';
 
 const State = {
   init: function(publicOpts) {
@@ -13,7 +23,7 @@ const State = {
       this.electron = Gun({peers: ['http://localhost:8768/gun'], file: 'State.local', multicast:false, localStorage: false}).get('state');
     }
     window.State = this;
-    window.iris.util.setPublicState && window.iris.util.setPublicState(this.public);
+    iris.util.setPublicState && iris.util.setPublicState(this.public);
   }
 };
 
