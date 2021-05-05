@@ -35,6 +35,9 @@ import Footer from './components/Footer.js';
 import State from './State.js';
 import Icons from './Icons.js';
 
+import irisIcon from 'url:../img/icon128.png';
+import irisLogoType from 'url:../img/iris_logotype.png';
+
 const userAgent = navigator.userAgent.toLowerCase();
 const isElectron = (userAgent.indexOf(' electron/') > -1);
 
@@ -84,8 +87,8 @@ class Menu extends Component {
       <div class="application-list">
         ${iris.util.isElectron ? html`<div class="electron-padding"/>` : html`
           <a href="/" onClick=${() => this.menuLinkClicked()} class="hidden-xs" tabindex="0" class="logo">
-            <img class="hidden-xs" src="img/icon128.png" width=40 height=40/>
-            <img src="img/iris_logotype.png" height=23 width=41 />
+            <img class="hidden-xs" src=${irisIcon} width=40 height=40/>
+            <img src=${irisLogoType} height=23 width=41 />
           </a>
         `}
         <div class="visible-xs-block">

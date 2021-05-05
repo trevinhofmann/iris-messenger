@@ -4,6 +4,7 @@ import { translate as t } from '../Translation.js';
 import State from '../State.js';
 import Helpers from '../Helpers.js';
 import Session from '../Session.js';
+import EmojiButton from '../lib/emoji-button';
 
 const notificationServiceUrl = 'https://iris-notifications.herokuapp.com/notify';
 

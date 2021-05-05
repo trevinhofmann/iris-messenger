@@ -11,6 +11,9 @@ import View from './View.js';
 import { route } from '../lib/preact-router.es.js';
 import {ExistingAccountLogin} from './Login.js';
 import Notifications from '../Notifications.js';
+import iris from 'iris-lib';
+import $ from 'jquery';
+import herokuButton from 'url:../../img/herokubutton.svg';
 
 class Settings extends View {
   constructor() {
@@ -90,7 +93,7 @@ class Settings extends View {
           <small dangerouslySetInnerHTML=${{ __html: t('peers_info')}}></small>
         </p>
         <p><a href="https://heroku.com/deploy?template=https://github.com/amark/gun">
-           <img src="./img/herokubutton.svg" alt="Deploy"/>
+           <img src=${herokuButton} alt="Deploy"/>
         </a></p>
         <p>Or <a href="https://github.com/amark/gun#docker">Docker</a>, or <a href="https://github.com/irislib/iris-electron">Iris-electron</a>.</p>
         ${iris.util.isElectron ? html`
