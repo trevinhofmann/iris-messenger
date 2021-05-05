@@ -11,6 +11,8 @@ import Identicon from '../components/Identicon.js';
 import Name from '../components/Name.js';
 import View from './View.js';
 import SearchBox from '../components/SearchBox.js';
+import $ from 'jquery';
+import QRCode from '../lib/qrcode.min.js';
 
 const SMS_VERIFIER_PUB = 'ysavwX9TVnlDw93w9IxezCJqSDMyzIU-qpD8VTN5yko.3ll1dFdxLkgyVpejFkEMOFkQzp_tRrkT3fImZEx94Co';
 
@@ -364,7 +366,7 @@ class Group extends View {
 var newGroupParticipant;
 
 function areWeAdmin(uuid) {
-  const me = Session.channels[uuid].participantProfiles[Session.getKey().pub];
+  const me = Session.channels[uuid] && Session.channels[uuid].participantProfiles[Session.getKey().pub];
   return !!(me && me.permissions && me.permissions.admin);
 }
 

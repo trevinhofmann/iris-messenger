@@ -49,6 +49,7 @@ class PublicMessage extends Message {
           return;
         }
         event.off();
+        console.log('serialized', serialized);
         const msg = await iris.SignedMessage.fromString(serialized);
         if (msg) {
           resolve(msg);
