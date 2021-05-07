@@ -1,7 +1,7 @@
 import State from './State.js';
 import Helpers from './Helpers.js';
 import Session from './Session.js';
-import iris from 'iris-lib';
+import iris from './lib/iris.min.js';
 import _ from './lib/underscore-min.js';
 
 var MAX_PEER_LIST_SIZE = 10;

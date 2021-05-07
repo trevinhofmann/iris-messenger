@@ -1,14 +1,14 @@
-import Gun from 'gun';
-import 'gun/sea';
-import 'gun/nts';
-import 'gun/lib/open';
-import 'gun/lib/radix';
-import 'gun/lib/radisk';
-import 'gun/lib/store';
-import 'gun/lib/rindexed';
+import './lib/gun.js';
+import './lib/sea.js';
+import './lib/nts.js';
+import './lib/open.js';
+import './lib/radix.js';
+import './lib/radisk.js';
+import './lib/store.js';
+import './lib/rindexed.js';
 
 import PeerManager from './PeerManager.js';
-import iris from 'iris-lib';
+import iris from './lib/iris.min.js';
 
 const State = {
   init: function(publicOpts) {

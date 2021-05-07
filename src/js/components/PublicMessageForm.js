@@ -8,7 +8,7 @@ import SafeImg from './SafeImg.js';
 import Torrent from './Torrent.js';
 import $ from 'jquery';
 import EmojiButton from '../lib/emoji-button';
-import iris from 'iris-lib';
+import iris from '../lib/iris.min.js';
 
 function twice(f) {
   f();

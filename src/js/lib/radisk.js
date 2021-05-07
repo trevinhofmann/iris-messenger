@@ -567,7 +567,7 @@
 	  var Radix = window.Radix;
 	  window.Radisk = Radisk;
 	} else { 
-	  var Gun = require('../gun');
+	  var Gun = require('./gun');
 		var Radix = require('./radix');
 		//var Radix = require('./radix2'); Radisk = require('./radisk2');
 		try{ module.exports = Radisk }catch(e){}

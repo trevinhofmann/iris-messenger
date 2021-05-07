@@ -1,4 +1,4 @@
-import iris from 'iris-lib';
+import iris from './lib/iris.min.js';
 
 import { render } from './lib/preact.js';
 import { Router, route } from './lib/preact-router.es.js';

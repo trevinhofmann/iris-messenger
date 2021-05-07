@@ -108,7 +108,7 @@
 	  var Gun = window.Gun;
 	  window.Radix = Radix;
 	} else { 
-	  var Gun = require('../gun');
+	  var Gun = require('./gun');
 		try{ module.exports = Radix }catch(e){}
 	}
 	

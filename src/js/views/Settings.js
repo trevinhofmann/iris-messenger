@@ -11,7 +11,7 @@ import View from './View.js';
 import { route } from '../lib/preact-router.es.js';
 import {ExistingAccountLogin} from './Login.js';
 import Notifications from '../Notifications.js';
-import iris from 'iris-lib';
+import iris from '../lib/iris.min.js';
 import $ from 'jquery';
 import herokuButton from 'url:../../img/herokubutton.svg';
 

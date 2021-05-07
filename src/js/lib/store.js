@@ -1,4 +1,4 @@
-var Gun = (typeof window !== "undefined")? window.Gun : require('../gun');
+var Gun = (typeof window !== "undefined")? window.Gun : require('./gun');
 
 Gun.on('create', function(root){
     if(Gun.TESTING){ root.opt.file = 'radatatest' }

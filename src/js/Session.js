@@ -3,7 +3,7 @@ import Notifications from './Notifications.js';
 import Helpers from './Helpers.js';
 import PeerManager from './PeerManager.js';
 import { route } from './lib/preact-router.es.js';
-import iris from 'iris-lib';
+import iris from './lib/iris.min.js';
 import _ from './lib/underscore-min.js';
 import SEA from 'gun/sea';
 

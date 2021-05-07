@@ -8,7 +8,7 @@ import Message from './Message.js';
 import Session from '../Session.js';
 import Torrent from './Torrent.js';
 import Autolinker from '../lib/Autolinker.min.js';
-import iris from 'iris-lib';
+import iris from '../lib/iris.min.js';
 
 const autolinker = new Autolinker({ stripPrefix: false, stripTrailingSlash: false});
 

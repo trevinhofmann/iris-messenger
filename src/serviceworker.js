@@ -1,5 +1,5 @@
-import Gun from 'gun';
-import 'gun/sea';
+import Gun from './js/lib/gun.js';
+import './js/lib/sea.js';
 import './js/lib/localforage.min';
 
 const urlToOpen = new URL('/', self.location.origin).href;
