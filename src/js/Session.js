@@ -3,9 +3,9 @@ import Notifications from './Notifications.js';
 import Helpers from './Helpers.js';
 import PeerManager from './PeerManager.js';
 import { route } from './lib/preact-router.es.js';
-import iris from './lib/iris.min.js';
-import _ from './lib/underscore-min.js';
-import SEA from 'gun/sea';
+import iris from './lib/iris.js';
+import './lib/underscore-min.js';
+import './lib/sea.js';
 
 let key;
 let myName;

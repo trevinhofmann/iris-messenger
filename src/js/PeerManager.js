@@ -1,8 +1,8 @@
 import State from './State.js';
 import Helpers from './Helpers.js';
 import Session from './Session.js';
-import iris from './lib/iris.min.js';
-import _ from './lib/underscore-min.js';
+import iris from './lib/iris.js';
+import './lib/underscore-min.js';
 
 var MAX_PEER_LIST_SIZE = 10;
 const ELECTRON_GUN_URL = 'http://localhost:8767/gun';

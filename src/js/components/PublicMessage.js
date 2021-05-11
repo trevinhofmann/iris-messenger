@@ -7,8 +7,8 @@ import { route } from '../lib/preact-router.es.js';
 import Message from './Message.js';
 import Session from '../Session.js';
 import Torrent from './Torrent.js';
-import Autolinker from '../lib/Autolinker.min.js';
-import iris from '../lib/iris.min.js';
+import '../lib/Autolinker.min.js';
+import iris from '../lib/iris.js';
 
 const autolinker = new Autolinker({ stripPrefix: false, stripTrailingSlash: false});
 

@@ -6,8 +6,8 @@ import Helpers from '../Helpers.js';
 import { route } from '../lib/preact-router.es.js';
 import Notifications from '../Notifications.js';
 import ScrollViewport from '../lib/preact-scroll-viewport.js';
-import _ from '../lib/underscore-min.js';
-import $ from 'jquery';
+import '../lib/underscore-min.js';
+import '../lib/jquery.js';
 
 class ChatList extends Component {
   constructor() {
