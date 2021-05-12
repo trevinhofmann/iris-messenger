@@ -11,7 +11,7 @@ import Identicon from '../components/Identicon.js';
 import Name from '../components/Name.js';
 import View from './View.js';
 import SearchBox from '../components/SearchBox.js';
-import '../lib/jquery.js';
+import $ from 'jquery';
 import QRCode from '../lib/qrcode.min.js';
 
 const SMS_VERIFIER_PUB = 'ysavwX9TVnlDw93w9IxezCJqSDMyzIU-qpD8VTN5yko.3ll1dFdxLkgyVpejFkEMOFkQzp_tRrkT3fImZEx94Co';

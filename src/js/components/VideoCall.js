@@ -39,9 +39,9 @@ class VideoCall extends Component {
     State.local.get('activeCall').put(null);
     State.local.get('outgoingCall').put(null);
     State.local.get('incomingCall').put(null);
-    State.local.get('call').open(call => {
+    /*State.local.get('call').open(call => {
       this.onCallMessage(call.pub, call.call);
-    });
+    });*/
     State.local.get('incomingCall').on(incomingCall => {
       if (!incomingCall) {
         clearTimeout(callTimeout);

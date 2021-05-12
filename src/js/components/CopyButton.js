@@ -2,7 +2,7 @@ import { Component } from '../lib/preact.js';
 import {html} from '../Helpers.js';
 import {translate as t} from '../Translation.js';
 import Helpers from '../Helpers.js';
-import '../lib/jquery.js';
+import $ from 'jquery';
 
 class CopyButton extends Component {
   copy(e, copyStr) {

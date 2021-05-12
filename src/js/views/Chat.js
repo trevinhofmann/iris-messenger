@@ -10,8 +10,8 @@ import Session from '../Session.js';
 import Notifications from '../Notifications.js';
 import ChatList from '../components/ChatList.js';
 import NewChat from '../components/NewChat.js';
-import '../lib/underscore-min.js';
-import '../lib/jquery.js';
+import _ from 'lodash';
+import $ from 'jquery';
 
 const caretDownSvg = html`
 <svg x="0px" y="0px"

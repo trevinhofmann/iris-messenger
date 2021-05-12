@@ -5,7 +5,6 @@ import PeerManager from './PeerManager.js';
 import { route } from './lib/preact-router.es.js';
 import iris from 'iris-lib';
 import _ from 'lodash';
-import './lib/sea.js';
 
 let key;
 let myName;
