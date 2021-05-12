@@ -11,8 +11,8 @@ import View from './View.js';
 import { route } from '../lib/preact-router.es.js';
 import {ExistingAccountLogin} from './Login.js';
 import Notifications from '../Notifications.js';
-import iris from '../lib/iris.js';
-import '../lib/jquery.js';
+import iris from 'iris-lib';
+import $ from 'jquery';
 
 class Settings extends View {
   constructor() {

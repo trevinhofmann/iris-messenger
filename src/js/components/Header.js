@@ -7,7 +7,7 @@ import { route } from '../lib/preact-router.es.js';
 import Identicon from './Identicon.js';
 import SearchBox from './SearchBox.js';
 import Icons from '../Icons.js';
-import iris from '../lib/iris.js';
+import iris from 'iris-lib';
 
 class Header extends Component {
   constructor() {

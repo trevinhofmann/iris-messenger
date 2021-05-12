@@ -1,18 +1,9 @@
-window.nodeRequire = require;
-delete window.require;
-delete window.exports;
-delete window.module;
-
-import './lib/gun.js';
-import './lib/jquery.js';
-import './lib/underscore-min.js';
-import './lib/iris.min.js';
-
 import { render } from './lib/preact.js';
 import { Router, route } from './lib/preact-router.es.js';
 import { createHashHistory } from './lib/history.production.min.js';
 import { Component } from './lib/preact.js';
 import { Link } from './lib/preact.match.js';
+import iris from 'iris-lib';
 
 import Helpers from './Helpers.js';
 import { html } from './Helpers.js';
@@ -42,6 +33,9 @@ import Identicon from './components/Identicon.js';
 import Footer from './components/Footer.js';
 import State from './State.js';
 import Icons from './Icons.js';
+
+import logo from 'url:../img/icon128.png';
+import logoType from 'url:../img/iris_logotype.png';
 
 const userAgent = navigator.userAgent.toLowerCase();
 const isElectron = (userAgent.indexOf(' electron/') > -1);
@@ -92,8 +86,8 @@ class Menu extends Component {
       <div class="application-list">
         ${iris.util.isElectron ? html`<div class="electron-padding"/>` : html`
           <a href="/" onClick=${() => this.menuLinkClicked()} class="hidden-xs" tabindex="0" class="logo">
-            <img class="hidden-xs" src="../img/icon128.png" width=40 height=40/>
-            <img src="../img/iris_logotype.png" height=23 width=41 />
+            <img class="hidden-xs" src=${logo} width=40 height=40/>
+            <img src=${logoType} height=23 width=41 />
           </a>
         `}
         <div class="visible-xs-block">

@@ -8,7 +8,7 @@ import './lib/store.js';
 import './lib/rindexed.js';
 
 import PeerManager from './PeerManager.js';
-import iris from './lib/iris.js';
+import iris from 'iris-lib';
 
 const State = {
   init: function(publicOpts) {

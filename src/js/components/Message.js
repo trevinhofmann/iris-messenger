@@ -3,7 +3,7 @@ import { html } from '../Helpers.js';
 import Helpers from '../Helpers.js';
 import Session from '../Session.js';
 import Torrent from './Torrent.js';
-import '../lib/Autolinker.min.js';
+import Autolinker from 'autolinker';
 
 const autolinker = new Autolinker({ stripPrefix: false, stripTrailingSlash: false});
 const ANIMATE_DURATION = 200;
