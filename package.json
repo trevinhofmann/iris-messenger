@@ -13,7 +13,7 @@
   },
   "scripts": {
     "start": "parcel src/index.html",
-    "build": "parcel build src/index.html"
+    "build": "parcel build src/index.html --public-url ./"
   },
   "dependencies": {
     "@zxing/library": "^0.18.5",
@@ -21,6 +21,7 @@
     "gun": "^0.2020.1232",
     "iris-lib": "https://github.com/irislib/iris-lib",
     "jquery": "^3.6.0",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "webtorrent": "^0.118.0"
   }
 }
