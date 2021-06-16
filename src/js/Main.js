@@ -40,7 +40,6 @@ import logoType from 'url:../img/iris_logotype.png';
 const userAgent = navigator.userAgent.toLowerCase();
 const isElectron = (userAgent.indexOf(' electron/') > -1);
 
-/*
 if (!isElectron && ('serviceWorker' in navigator)) {
   window.addEventListener('load', function() {
     navigator.serviceWorker.register(new URL('../serviceworker.js', import.meta.url))
@@ -50,7 +49,6 @@ if (!isElectron && ('serviceWorker' in navigator)) {
     });
   });
 }
-*/
 
 State.init();
 Session.init({autologin: window.location.hash.length > 2});

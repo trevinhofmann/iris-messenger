@@ -1,6 +1,6 @@
-import Gun from './js/lib/gun.js';
-import './js/lib/sea.js';
-import './js/lib/localforage.min';
+import Gun from 'gun';
+import 'gun/sea';
+import './js/lib/localforage.min.js';
 
 const urlToOpen = new URL('/', self.location.origin).href;
 var CACHE_NAME = 'iris-messenger-cache-v1';
