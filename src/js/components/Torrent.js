@@ -2,6 +2,7 @@ import { Component } from '../lib/preact.js';
 import Helpers, {html} from '../Helpers.js';
 import Session from "../Session.js";
 import { translate as tr } from '../Translation.js';
+import $ from 'jquery';
 
 const isOfType = (f, types) => types.indexOf(f.name.slice(-4))  !== -1;
 const isVideo = f => isOfType(f, ['webm', '.mp4', '.ogg']);
