@@ -18,11 +18,12 @@
   },
   "dependencies": {
     "@zxing/library": "^0.18.5",
+    "@zxing/library": "^0.18.6",
     "autolinker": "^3.14.3",
     "gun": "^0.2020.1232",
     "iris-lib": "https://github.com/irislib/iris-lib",
     "jquery": "^3.6.0",
     "lodash": "^4.17.21",
-    "webtorrent": "^0.118.0"
+    "webtorrent": "^1.0.0"
   }
 }
