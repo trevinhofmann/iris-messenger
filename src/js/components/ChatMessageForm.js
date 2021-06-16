@@ -70,7 +70,6 @@ class ChatMessageForm extends Component {
   }
 
   downloadWebtorrent(torrentId) {
-    console.log('trying to open webtorrent', torrentId);
     function onTorrent(torrent) {
       // Torrents can contain many files. Let's use the .mp4 file
       var file = torrent.files.find(function (file) {

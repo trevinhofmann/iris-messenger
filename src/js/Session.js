@@ -237,7 +237,6 @@ function getFollows() {
 const myPeerUrl = ip => `http://${ip}:8767/gun`;
 
 function shareMyPeerUrl(channel) {
-  console.log('sharing my peer url', myPeerUrl(settings.electron.publicIp), channel.getId());
   channel.put && channel.put('my_peer', myPeerUrl(settings.electron.publicIp));
 }
 
