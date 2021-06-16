@@ -7,9 +7,12 @@ import Session from '../Session.js';
 
 import State from '../State.js';
 
-var ringSound = new Audio('../../audio/ring.mp3');
+import ringMp3 from 'url:../../audio/ring.mp3';
+import callMp3 from 'url:../../audio/call.mp3';
+
+var ringSound = new Audio(ringMp3);
 ringSound.loop = true;
-var callSound = new Audio('../../audio/call.mp3');
+var callSound = new Audio(callMp3);
 var callTimeout;
 var callSoundTimeout;
 var callingInterval;
