@@ -12,6 +12,7 @@ import ChatList from '../components/ChatList.js';
 import NewChat from '../components/NewChat.js';
 import _ from 'lodash';
 import $ from 'jquery';
+import iris from 'iris-lib';
 
 const caretDownSvg = html`
 <svg x="0px" y="0px"
