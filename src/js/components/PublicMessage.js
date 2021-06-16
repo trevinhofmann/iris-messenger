@@ -154,18 +154,27 @@ class PublicMessage extends Message {
   }
 
   render() {
-    if (!this.state.msg) { return html``; }
+    if (!this.state.msg) { return ''; }
+    if (this.props.filter && !this.props.filter(this.state.msg)) { return ''; }
     //if (++this.i > 1) console.log(this.i);
     let name = this.props.name || this.state.name;
     const emojiOnly = this.state.msg.text && this.state.msg.text.length === 2 && Helpers.isEmoji(this.state.msg.text);
+    const isThumbnail = this.props.thumbnail ? 'thumbnail-item' : '';
     const p = document.createElement('p');
-    p.innerText = this.state.msg.text;
+    let text = this.state.msg.text;
+    if (isThumbnail && text.length > 128) {
+      text = text.slice(0,128) + '...';
+    }
+    p.innerText = text;
     const h = emojiOnly ? p.innerHTML : Helpers.highlightEmoji(p.innerHTML);
     const innerHTML = autolinker.link(h);
     const time = typeof this.state.msg.time === 'object' ? this.state.msg.time : new Date(this.state.msg.time);
+    const dateStr = time.toLocaleString(window.navigator.language, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    const timeStr = time.toLocaleTimeString(window.navigator.language, {timeStyle: 'short'});
+
 
     return html`
-      <div class="msg ${this.props.asReply ? 'reply' : ''}">
+      <div class="msg ${isThumbnail} ${this.props.asReply ? 'reply' : ''}">
         <div class="msg-content">
           <div class="msg-sender">
             <div class="msg-sender-link" onclick=${() => this.onClickName()}>
@@ -207,7 +216,12 @@ class PublicMessage extends Message {
               ${this.state.likes || ''}
             </span>
             <div class="time">
-              <a href="/post/${encodeURIComponent(this.props.hash)}">${Helpers.getRelativeTimeText(time)}</a>
+              <a href="/post/${encodeURIComponent(this.props.hash)}" class="tooltip">
+                  ${Helpers.getRelativeTimeText(time)}
+                  <span class="tooltiptext">
+                    ${dateStr} ${timeStr}
+                  </span>
+              </a>
             </div>
           </div>
           ${this.state.showLikes ? html`

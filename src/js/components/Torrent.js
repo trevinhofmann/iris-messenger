@@ -3,6 +3,8 @@ import Helpers, {html} from '../Helpers.js';
 import Session from "../Session.js";
 import { translate as tr } from '../Translation.js';
 import $ from 'jquery';
+import State from '../State.js';
+import Icons from '../Icons.js';
 
 const isOfType = (f, types) => types.indexOf(f.name.slice(-4))  !== -1;
 const isVideo = f => isOfType(f, ['webm', '.mp4', '.ogg']);
@@ -10,34 +12,35 @@ const isAudio = f => isOfType(f, ['.mp3', '.wav', '.m4a']);
 const isImage = f => isOfType(f, ['.jpg', 'jpeg', '.gif', '.png']);
 
 class Torrent extends Component {
+  constructor() {
+    super();
+    this.eventListeners = {};
+  }
+
   componentDidMount() {
+    State.local.get('player').on((player,a,b,e) => {
+      this.player = player;
+      this.eventListeners['player'] = e;
+      this.setState({player});
+      if (this.torrent && this.player && this.player.filePath !== this.state.activeFilePath) {
+        const file = this.getActiveFile(this.torrent);
+        file && this.openFile(file);
+      }
+    });
+    const showFiles = this.props.showFiles;
+    showFiles && this.setState({showFiles});
     if (Session.settings.local.enableWebtorrent) {
       this.startTorrenting();
     }
   }
 
-  onPlay(e) {
-    if (!e.target.muted) {
-      $('#media-player').empty();
-      $('#media-player-container').hide();
-    }
+  componentWillUnmount() {
+    Object.values(this.eventListeners).forEach(e => e.off());
   }
 
-  componentWillUnmount() {
-    const mediaEl = $(this.base).find('audio').get(0);
-    if (mediaEl && !mediaEl.paused && !mediaEl.muted) { // TODO: do this the preact way
-      const player = $('#media-player');
-      const info = $('#media-info');
-      const cover = $('#media-cover');
-      mediaEl.removeEventListener('play', this.onPlay);
-      mediaEl.removeEventListener('volumechange', this.onPlay);
-      player.empty();
-      player[0].appendChild(mediaEl);
-      info.empty();
-      info[0].appendChild($(this.base).find('.info').get(0));
-      cover.empty();
-      cover[0].appendChild($(this.base).find('.cover').get(0));
-      $('#media-player-container').show();
+  onPlay(e) {
+    if (!e.target.muted) {
+      State.local.get('player').get('paused').put(true);
     }
   }
 
@@ -47,21 +50,35 @@ class Torrent extends Component {
     const client = Helpers.getWebTorrentClient();
     const existing = client.get(torrentId);
     if (existing) {
-      console.log('opening existing', torrentId);
       this.onTorrent(existing, clicked);
     } else {
-      console.log('adding webtorrent', torrentId);
       client.add(torrentId, t => this.onTorrent(t, clicked));
     }
   }
 
+  playAudio(filePath, e) {
+    e && e.preventDefault();
+    State.local.get('player').put({torrentId: this.props.torrentId, filePath, paused: false});
+  }
+
+  pauseAudio(e) {
+    e && e.preventDefault();
+    State.local.get('player').put({paused: true});
+  }
+
   openFile(file, clicked) {
     const base = $(this.base);
-    if (this.state.activeFilePath === file.path) {
-      return base.find('video, audio').get(0).play();
-    }
     const isVid = isVideo(file);
     const isAud = !isVid && isAudio(file);
+    if (this.state.activeFilePath === file.path) {
+      if (isVid) {
+        const el = base.find('video').get(0);
+        el && el.play();
+      } else if (isAud) {
+        State.local.get('player').get('paused').put(false);
+      }
+      return;
+    }
 
     let splitPath;
     if (!isVid) {
@@ -78,7 +95,12 @@ class Torrent extends Component {
     }
     const el = base.find('.player');
     el.empty();
-    file.appendTo(el[0], {autoplay, muted});
+    if (isAud && clicked) {
+      this.playAudio(file.path);
+    }
+    if (!isAud) {
+      file.appendTo(el.get(0), {autoplay, muted});
+    }
     base.find('.info').toggle(!isVid);
     const player = base.find('video, audio').get(0);
     if (player) {
@@ -86,8 +108,7 @@ class Torrent extends Component {
         const typeCheck = player.tagName === 'VIDEO' ? isVideo : isAudio;
         this.openNextFile(typeCheck);
       });
-      player.addEventListener('play', this.onPlay);
-      player.addEventListener('volumechange', this.onPlay);
+      player.onplay = player.onvolumechange = this.onPlay;
     }
   }
 
@@ -109,15 +130,27 @@ class Torrent extends Component {
     this.openFile(this.state.torrent.files[nextIndex], true);
   }
 
+  getActiveFile(torrent) {
+    const p = this.player;
+    let file;
+    if (p && p.torrentId === this.props.torrentId) {
+      file = torrent.files.find(f => {
+        return f.path === p.filePath;
+      });
+    }
+    return file;
+  }
+
   onTorrent(torrent, clicked) {
-    console.log('got torrent', torrent);
+    this.torrent = torrent;
     const video = torrent.files.find(f => isVideo(f));
     const audio = torrent.files.find(f => isAudio(f));
     const img = torrent.files.find(f => isImage(f));
     let poster = torrent.files.find(f => isImage(f) && (f.name.indexOf('cover') > -1 || f.name.indexOf('poster') > -1));
     poster = poster || img;
     poster && poster.appendTo($(this.base).find('.cover').get(0));
-    const file = video || audio || img || torrent.files[0];
+
+    const file = this.getActiveFile(torrent) || video || audio || img || torrent.files[0];
     this.setState({torrent, cover: img});
     file && this.openFile(file, clicked);
   }
@@ -135,6 +168,16 @@ class Torrent extends Component {
   render() {
     const s = this.state;
     const t = s.torrent;
+    const p = s.player;
+    const playing = p && p.torrentId === this.props.torrentId && !p.paused;
+    let playButton = '';
+    if (s.isAudioOpen) {
+      playButton = playing ? html`
+          <a href="#" onClick=${e => this.pauseAudio(e)}>${Icons.pause}</a>
+      `: html`
+          <a href="#" onClick=${e => this.playAudio(s.activeFilePath, e)}>${Icons.play}</a>
+      `;
+    }
     return html`
         <div class="torrent">
             ${!Session.settings.local.enableWebtorrent && !s.torrenting ? html`
@@ -157,11 +200,13 @@ class Torrent extends Component {
                 ):''}
             </div>
             ${s.hasNext ? html`<b>prev</b>`:''}
-            <div class="player"></div>
+            <div class="player">
+                ${playButton}
+            </div>
             ${s.hasNext ? html`<b>next</b>`:''}
             <a href=${this.props.torrentId}>Magnet link</a>
             ${t && t.files ? html`
-                <a href="" style="margin-left:30px;" onClick=${e => this.showFilesClicked(e)}>${tr('show_details')}</a>
+                <a href="" style="margin-left:30px;" onClick=${e => this.showFilesClicked(e)}>${tr('show_files')}</a>
             `:''}
             ${s.showFiles && t && t.files ? html`
               <p>${tr('peers')}: ${t.numPeers}</p>

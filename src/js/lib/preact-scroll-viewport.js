@@ -1,4 +1,4 @@
-import { h, Component } from './preact.js';
+import { Component } from './preact.js';
 import {html} from '../Helpers.js';
 
 const EVENT_OPTS = {
@@ -92,7 +92,7 @@ export default class ScrollViewport extends Component {
 
   return html`
     <div ${{...props}}>
-    <div style=${{ position: 'relative', top: start*rowHeight }}>
+    <div class=${this.props.class||''} style=${{ position: 'relative', top: start*rowHeight }}>
     ${visible}
     </div>
     </div>

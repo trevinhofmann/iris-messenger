@@ -89,7 +89,7 @@ class Settings extends View {
         `: ''}
         <h4>Set up your own peer</h4>
         <p>
-          <small dangerouslySetInnerHTML=${{ __html: t('peers_info')}}></small>
+          <small dangerouslySetInnerHTML=${{ __html: t('peers_info', "href=\"https://github.com/amark/gun#deploy\"")}}></small>
         </p>
         <p><a href="https://heroku.com/deploy?template=https://github.com/amark/gun">
            <img src="../../img/herokubutton.svg" alt="Deploy"/>
@@ -144,6 +144,7 @@ class Settings extends View {
           <button id="reset-peers" style="margin-bottom: 15px" onClick=${() => this.resetPeersClicked()}>${t('restore_defaults')}</button>
         `: ''}
         ${urls.map(url => {
+            if (url == 1) {return;} // weirdness
             const peer = PeerManager.getKnownPeers()[url] || {};
             const peerFromGun = this.state.peersFromGun && this.state.peersFromGun[url];
             const connected = peerFromGun && peerFromGun.wire && peerFromGun.wire.hied === 'hi';

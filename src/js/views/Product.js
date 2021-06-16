@@ -101,7 +101,6 @@ class Product extends StoreView {
       description: this.newProductDescription,
       price: this.newProductPrice
     };
-    console.log(product);
     State.public.user().get('store').get('products').get(this.newProductId || this.newProductName).put(product);
     route(`/store/${Session.getPubKey()}`)
   }

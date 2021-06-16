@@ -1,6 +1,5 @@
 import { render } from './lib/preact.js';
-import { Router, route } from './lib/preact-router.es.js';
-import { createHashHistory } from './lib/history.production.min.js';
+import { Router } from './lib/preact-router.es.js';
 import { Component } from './lib/preact.js';
 import { Link } from './lib/preact.match.js';
 import iris from 'iris-lib';
@@ -27,9 +26,11 @@ import Feed from './views/Feed.js';
 import About from './views/About.js';
 import Explorer from './views/Explorer.js';
 import Contacts from './views/Contacts.js';
+import Torrent from './views/Torrent.js';
 
 import VideoCall from './components/VideoCall.js';
 import Identicon from './components/Identicon.js';
+import MediaPlayer from './components/MediaPlayer.js';
 import Footer from './components/Footer.js';
 import State from './State.js';
 import Icons from './Icons.js';
@@ -60,6 +61,7 @@ const APPLICATIONS = [ // TODO: move editable shortcuts to localState gun
   {url: '/', text: t('home'), icon: Icons.home},
   {url: '/media', text: t('media'), icon: Icons.play},
   {url: '/chat', text: t('messages'), icon: Icons.chat},
+  {url: '/store', text: t('market'), icon: Icons.store},
   {url: '/contacts', text: t('contacts'), icon: Icons.user},
   {url: '/settings', text: t('settings'), icon: Icons.settings},
   {url: '/explorer', text: t('explorer'), icon: Icons.folder},
@@ -124,9 +126,6 @@ class Main extends Component {
 
   handleRoute(e) {
     let activeRoute = e.url;
-    if (!activeRoute && window.location.hash) {
-      return route(window.location.hash.replace('#', '')); // bubblegum fix back navigation
-    }
     document.title = 'Iris';
     if (activeRoute && activeRoute.length > 1) { document.title += ' - ' + Helpers.capitalize(activeRoute.replace('/', '')); }
     State.local.get('activeRoute').put(activeRoute);
@@ -166,13 +165,15 @@ class Main extends Component {
           <${Menu}/>
           <div class="overlay" onClick=${e => this.onClickOverlay(e)}></div>
           <div class="view-area">
-            <${Router} history=${createHashHistory()} onChange=${e => this.handleRoute(e)}>
+            <${Router} onChange=${e => this.handleRoute(e)}>
               <${Feed} path="/"/>
               <${Feed} path="/feed"/>
-              <${Feed} path="/media" index="media"/>
+              <${Feed} path="/search/:term?/:type?"/>
+              <${Feed} path="/media" index="media" thumbnails=${true}/>
               <${Login} path="/login"/>
               <${Chat} path="/chat/:id?"/>
               <${Message} path="/post/:hash"/>
+              <${Torrent} path="/torrent/:id"/>
               <${About} path="/about"/>
               <${Settings} path="/settings"/>
               <${LogoutConfirmation} path="/logout"/>
@@ -182,7 +183,7 @@ class Main extends Component {
               <${Profile} path="/media/:id" tab="media"/>
               <${Group} path="/group/:id?"/>
               <${Store} path="/store/:store?"/>
-              <${Checkout} path="/checkout/:store"/>
+              <${Checkout} path="/checkout/:store?"/>
               <${Product} path="/product/:product/:store"/>
               <${Product} path="/product/new" store=Session.getPubKey()/>
               <${Explorer} path="/explorer/:node"/>
@@ -193,15 +194,7 @@ class Main extends Component {
             </${Router}>
           </div>
         </section>
-        <div id="media-player-container" style="display:none">
-            <div id="media-player"></div>
-            <div id="media-cover"></div>
-            <div id="media-info"></div>
-            <div id="close-media" onClick=${() => {
-              document.getElementById('media-player').innerHTML = '';
-              document.getElementById('media-player-container').style = 'display: none';
-            }}>${Icons.close}</div>
-        </div>
+        <${MediaPlayer}/>
         <${Footer}/>
         <${VideoCall}/>
       ` : html`<${Login}/>`;
@@ -219,12 +212,3 @@ render(html`<${Main}/>`, document.body);
 document.body.style = 'opacity:1';
 
 Helpers.showConsoleWarning();
-
-window.addEventListener('resize', () => { // if resizing up from mobile size menu view
-  const el = document.querySelector('.main-view');
-  const visible = el && el.offsetWidth > 0 && el.offsetHeight > 0;
-  const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
-  if (vw > 565 && visible) {
-    route('/');
-  }
-})

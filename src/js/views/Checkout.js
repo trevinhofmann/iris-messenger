@@ -4,11 +4,11 @@ import Session from '../Session.js';
 import { route } from '../lib/preact-router.es.js';
 import SafeImg from '../components/SafeImg.js';
 import Store from './Store.js';
+import {translate as t} from '../Translation.js';
 
 class Checkout extends Store {
   constructor() {
     super();
-    this.eventListeners = [];
     this.followedUsers = new Set();
     this.followers = new Set();
     this.state.paymentMethod = 'bitcoin';
@@ -40,7 +40,7 @@ class Checkout extends Store {
 
   renderCart() {
     return html`
-      <h3 class="side-padding-xs">Shopping cart</h3>
+      <h3 class="side-padding-xs">${t('shopping_cart')}</h3>
       <div class="flex-table">
         ${Object.keys(this.cart).filter(k => !!this.cart[k] && !!this.state.items[k]).map(k => {
           const i = this.state.items[k];
@@ -66,11 +66,11 @@ class Checkout extends Store {
         })}
         <div class="flex-row">
           <div class="flex-cell"></div>
-          <div class="flex-cell no-flex"><b>Total ${this.state.totalPrice} €</b></div>
+          <div class="flex-cell no-flex"><b>${t('total')} ${this.state.totalPrice} €</b></div>
         </div>
       </div>
       <p class="side-padding-xs">
-        <button onClick=${() => this.setState({page:'delivery'})}>Next</button>
+        <button onClick=${() => this.setState({page:'delivery'})}>${t('next')}</button>
       </p>
     `;
   }
@@ -78,17 +78,17 @@ class Checkout extends Store {
   renderDelivery() {
     return html`
       <div class="side-padding-xs">
-        <h3>Delivery</h3>
+        <h3>${t('delivery')}</h3>
         <p>
-          <input type="text" placeholder="Name" value=${this.state.delivery.name} onInput=${e => State.local.get('delivery').get('name').put(e.target.value)}/>
+          <input type="text" placeholder=${t('name')} value=${this.state.delivery.name} onInput=${e => State.local.get('delivery').get('name').put(e.target.value)}/>
         </p>
         <p>
-          <input type="text" placeholder="Address" value=${this.state.delivery.address} onInput=${e => State.local.get('delivery').get('address').put(e.target.value)}/>
+          <input type="text" placeholder=${t('address')} value=${this.state.delivery.address} onInput=${e => State.local.get('delivery').get('address').put(e.target.value)}/>
         </p>
         <p>
-          <input type="text" placeholder="Email (optional)" value=${this.state.delivery.email} onInput=${e => State.local.get('delivery').get('email').put(e.target.value)}/>
+          <input type="text" placeholder=${t('email_optional')} value=${this.state.delivery.email} onInput=${e => State.local.get('delivery').get('email').put(e.target.value)}/>
         </p>
-        <button onClick=${() => this.setState({page:'payment'})}>Next</button>
+        <button onClick=${() => this.setState({page:'payment'})}>${t('next')}</button>
       </div>
     `;
   }
@@ -101,7 +101,7 @@ class Checkout extends Store {
   renderPayment() {
     return html`
       <div class="side-padding-xs">
-        <h3>Select a payment method</h3>
+        <h3>${t('payment_method')}:</h3>
         <p>
           <label for="bitcoin" onClick=${e => this.paymentMethodChanged(e)}>
             <input type="radio" name="payment" id="bitcoin" value="bitcoin" checked=${this.state.paymentMethod === 'bitcoin'}/>
@@ -114,14 +114,14 @@ class Checkout extends Store {
             Dogecoin
           </label>
         </p>
-        <button onClick=${() => this.setState({page:'confirmation'})}>Next</button>
+        <button onClick=${() => this.setState({page:'confirmation'})}>${t('next')}</button>
       </div>
     `;
   }
 
   renderConfirmation() {
     return html`
-      <h3 class="side-padding-xs">Confirmation</h3>
+      <h3 class="side-padding-xs">${t('confirm')}</h3>
       <div class="flex-table">
         ${Object.keys(this.cart).filter(k => !!this.cart[k] && !!this.state.items[k]).map(k => {
           const i = this.state.items[k];
@@ -142,21 +142,44 @@ class Checkout extends Store {
         })}
         <div class="flex-row">
           <div class="flex-cell"></div>
-          <div class="flex-cell no-flex"><b>Total ${this.state.totalPrice} €</b></div>
+          <div class="flex-cell no-flex"><b>${t('total')} ${this.state.totalPrice} €</b></div>
         </div>
       </div>
       <p>
-        Delivery:<br/>
+      ${t('delivery')}:<br/>
         ${this.state.delivery.name}<br/>
         ${this.state.delivery.address}<br/>
         ${this.state.delivery.email}
       </p>
-      <p>Payment method: <b>${this.state.paymentMethod}</b></p>
-      <p class="side-padding-xs"><button onClick=${() => this.confirm()}>Confirm</button></p>
+      <p>${t('payment_method')}: <b>${this.state.paymentMethod}</b></p>
+      <p class="side-padding-xs"><button onClick=${() => this.confirm()}>${t('confirmation')}</button></p>
     `;
   }
 
+  renderCartList() {
+    return html`
+    <div class="main-view" id="profile">
+      <div class="content">
+        <h2>${t('shopping_carts')}</h2>
+        ${this.state.carts && Object.keys(this.state.carts).map(user => {
+          const cartTotalItems = Object.keys(this.state.carts[user]).reduce((sum, k) => sum + this.state.carts[user][k], 0);
+          if (!cartTotalItems) { return; }
+          return html`
+            <p>
+              <a href="/checkout/${user}">
+                <iris-text path="profile/name" user=${user} editable="false"/> (${cartTotalItems})
+              </a>
+            </p>
+          `;
+        })}
+      </div>
+    </div>`;
+  }
+
   render() {
+    if (!this.props.store) {
+      return this.renderCartList();
+    }
     let page;
     const p = this.state.page;
     if (p === 'delivery') {
@@ -175,10 +198,10 @@ class Checkout extends Store {
           <a href="/store/${this.props.store}"><iris-text path="profile/name" user=${this.props.store}/></a>
         </p>
         <div id="store-steps">
-          <div class=${p === 'cart' ? 'active' : ''} onClick=${() => this.setState({page:'cart'})}>Cart</div>
-          <div class=${p === 'delivery' ? 'active' : ''} onClick=${() => this.setState({page:'delivery'})}>Delivery</div>
-          <div class=${p === 'payment' ? 'active' : ''} onClick=${() => this.setState({page:'payment'})}>Payment</div>
-          <div class=${p === 'confirmation' ? 'active' : ''} onClick=${() => this.setState({page:'confirmation'})}>Confirm</div>
+          <div class=${p === 'cart' ? 'active' : ''} onClick=${() => this.setState({page:'cart'})}>${t('shopping_cart')}</div>
+          <div class=${p === 'delivery' ? 'active' : ''} onClick=${() => this.setState({page:'delivery'})}>${t('delivery')}</div>
+          <div class=${p === 'payment' ? 'active' : ''} onClick=${() => this.setState({page:'payment'})}>${t('payment')}</div>
+          <div class=${p === 'confirmation' ? 'active' : ''} onClick=${() => this.setState({page:'confirmation'})}>${t('confirm')}</div>
         </div>
         ${page}
       </div>
@@ -196,16 +219,22 @@ class Checkout extends Store {
   }
 
   componentDidMount() {
-    StoreView.prototype.componentDidMount.call(this);
+    Store.prototype.componentDidMount.call(this);
+    Object.values(this.eventListeners).forEach(e => e.off());
+    this.eventListeners = [];
     const pub = this.props.store;
-    this.setState({page:'cart'})
-    this.eventListeners.forEach(e => e.off());
-    State.local.get('cart').get(pub).map().on((v, k) => {
-      this.cart[k] = v;
-      this.setState({cart: this.cart});
-    });
-    State.local.get('paymentMethod').on(paymentMethod => this.setState({paymentMethod}));
-    State.local.get('delivery').open(delivery => this.setState({delivery}));
+    this.carts = {};
+    if (pub) {
+      this.setState({page:'cart'})
+      State.local.get('cart').get(pub).map().on((v, k) => {
+        this.cart[k] = v;
+        this.setState({cart: this.cart});
+      });
+      State.local.get('paymentMethod').on(paymentMethod => this.setState({paymentMethod}));
+      State.local.get('delivery').open(delivery => this.setState({delivery}));
+    } else {
+      this.getAllCarts();
+    }
   }
 }
 
