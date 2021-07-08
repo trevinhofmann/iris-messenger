@@ -14,7 +14,8 @@
   "scripts": {
     "start": "parcel src/index.html",
     "build": "parcel build src/index.html --public-url ./",
-    "dist": "echo 'Iris: http://localhost:8080'; npx http-server dist --silent --proxy http://localhost:8080?"
+    "dist": "echo 'Iris: http://localhost:8080'; npx http-server dist --silent --proxy http://localhost:8080?",
+    "lint": "eslint src/js/*.js --fix;eslint src/js/components/*.js --fix; eslint src/js/views/*.js --fix"
   },
   "dependencies": {
     "@zxing/library": "^0.18.6",

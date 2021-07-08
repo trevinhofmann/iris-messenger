@@ -38,6 +38,10 @@ import Icons from './Icons.js';
 import logo from 'url:../img/icon128.png';
 import logoType from 'url:../img/iris_logotype.png';
 
+if (window.location.hash && window.location.hash.indexOf('#/') === 0) { // redirect old urls
+  window.location.href = window.location.href.replace('#/', '');
+}
+
 const userAgent = navigator.userAgent.toLowerCase();
 const isElectron = (userAgent.indexOf(' electron/') > -1);
 
@@ -52,7 +56,7 @@ if (!isElectron && ('serviceWorker' in navigator)) {
 }
 
 State.init();
-Session.init({autologin: window.location.hash.length > 2});
+Session.init({autologin: window.location.pathname.length > 2});
 PeerManager.init();
 
 Helpers.checkColorScheme();
@@ -149,7 +153,7 @@ class Main extends Component {
   render() {
     let content = '';
     const isDesktopNonMac = this.state.platform && this.state.platform !== 'darwin';
-    if (this.state.loggedIn || window.location.hash.length <= 2) {
+    if (this.state.loggedIn || window.location.pathname.length <= 2) {
       content = this.state.loggedIn ? html`
         ${isDesktopNonMac ? html`
           <div class="windows-titlebar">

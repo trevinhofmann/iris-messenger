@@ -300,7 +300,7 @@ class Profile extends View {
     }
     qrCodeEl.empty();
     new QRCode(qrCodeEl[0], {
-      text: 'https://iris.to/' + window.location.hash,
+      text: 'https://iris.to/' + window.location.pathname,
       width: 300,
       height: 300,
       colorDark : "#000000",

@@ -32,7 +32,7 @@ const DEFAULT_SETTINGS = {
 
 const settings = DEFAULT_SETTINGS;
 
-function getFollowsFn(callback, k, maxDepth = 3, currentDepth = 1) {
+function getExtendedFollows(callback, k, maxDepth = 3, currentDepth = 1) {
   k = k || key.pub;
 
   function addFollow(k, followDistance, follower) {
@@ -58,7 +58,7 @@ function getFollowsFn(callback, k, maxDepth = 3, currentDepth = 1) {
     if (isFollowing) {
       addFollow(followedKey, currentDepth, k);
       if (currentDepth < maxDepth) {
-        getFollowsFn(callback, followedKey, maxDepth, currentDepth + 1);
+        getExtendedFollows(callback, followedKey, maxDepth, currentDepth + 1);
       }
     }
   });
@@ -67,10 +67,10 @@ function getFollowsFn(callback, k, maxDepth = 3, currentDepth = 1) {
 }
 
 function setOurOnlineStatus() {
-  const activeRoute = window.location.hash;
+  const activeRoute = window.location.pathname;
   iris.Channel.setActivity(State.public, ourActivity = 'active');
   const setActive = _.debounce(() => {
-    const chat = activeRoute && channels[activeRoute.replace('#/profile/','').replace('#/chat/','')];
+    const chat = activeRoute && channels[activeRoute.replace('/profile/','').replace('/chat/','')];
     if (chat && !ourActivity) {
       chat.setMyMsgsLastSeenTime();
     }
@@ -84,7 +84,7 @@ function setOurOnlineStatus() {
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === 'visible') {
       iris.Channel.setActivity(State.public, ourActivity = 'active');
-      const chatId = activeRoute.replace('#/profile/','').replace('#/chat/','');
+      const chatId = activeRoute.replace('/profile/','').replace('/chat/','');
       const chat = activeRoute && channels[chatId];
       if (chat) {
         chat.setMyMsgsLastSeenTime();
@@ -146,7 +146,7 @@ function login(k) {
     isBlocked && (follows[user] = null);
     State.local.get('follows').get(user).put(isBlocked);
   });
-  getFollowsFn((k, info) => {
+  getExtendedFollows((k, info) => {
     State.local.get('follows').get(k).put(true);
     if (!hasFollowers && k === getPubKey() && info.followers.size) {
       State.local.get('noFollowers').put(false);
@@ -280,7 +280,7 @@ function addChannel(chat) {
   //$(".chat-list").append(el);
   chat.theirMsgsLastSeenTime = '';
   chat.getTheirMsgsLastSeenTime(time => {
-    if (chat && time && time > chat.theirMsgsLastSeenTime) {
+    if (chat && time && time >= chat.theirMsgsLastSeenTime) {
       chat.theirMsgsLastSeenTime = time;
       chatNode.get('theirMsgsLastSeenTime').put(time);
     }
@@ -350,7 +350,6 @@ function addChannel(chat) {
   });
   State.local.get('channels').get(pub).put({enabled:true});
   if (chat.onTheir) {
-    console.log('Listen to private peer url from', pub);
     chat.onTheir('my_peer', (url, k, from) => {
       console.log('Got private peer url', url, 'from', from);
       PeerManager.addPeer({url, from})
@@ -369,8 +368,12 @@ function processMessage(chatId, msg, info) {
   State.local.get('channels').get(chatId).get('msgs').get(msg.time + (msg.from && msg.from.slice(0, 10))).put(JSON.stringify(msg));
   msg.timeObj = new Date(msg.time);
   if (!info.selfAuthored && msg.timeObj > (chat.myLastSeenTime || -Infinity)) {
-    if (window.location.hash !== '#/chat/' + chatId || document.visibilityState !== 'visible') {
+    if (window.location.pathname !== '/chat/' + chatId || document.visibilityState !== 'visible') {
       Notifications.changeChatUnseenCount(chatId, 1);
+    } else {
+      if (ourActivity === 'active') {
+        chat.setMyMsgsLastSeenTime();
+      }
     }
   }
   if (!info.selfAuthored && msg.time > chat.theirMsgsLastSeenTime) {

@@ -3,10 +3,11 @@ import State from '../State.js';
 import Session from '../Session.js';
 import { Component } from '../lib/preact.js';
 import View from './View.js';
-import ScrollViewport from '../lib/preact-scroll-viewport.js';
 
 const hashRegex = /^(?:[A-Za-z0-9+/]{4}){10}(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)+$/;
 const pubKeyRegex = /^[A-Za-z0-9\-\_]{40,50}\.[A-Za-z0-9\_\-]{40,50}$/;
+
+const SHOW_CHILDREN_COUNT = 50;
 
 const chevronDown = html`
 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
@@ -23,15 +24,21 @@ const chevronRight = html`
 class Explorer extends View {
   renderView() {
     const split = (this.props.node || '').split('/');
-    const gun = (split.length && split[0]) === 'local' ? State.local : State.public;
+    const scope = split.length && split[0];
+    let gun = State.public;
+    if (scope === 'local') {
+      gun = State.local;
+    } else if (scope === 'group') {
+      gun = State.group();
+    }
     const path = split.slice(1).join('/');
     const pathString = split.map((k, i) => html`
-      ${chevronRight} <a href="#/explorer/${encodeURIComponent(split.slice(0,i+1).join('/'))}">${decodeURIComponent(k)}</a>
+      ${chevronRight} <a href="/explorer/${encodeURIComponent(split.slice(0,i+1).join('/'))}">${decodeURIComponent(k)}</a>
     `);
     return html`
       ${path ? '' : html `<p>Useful debug data for nerds.</p>`}
       <p>
-        <a href="#/explorer">All</a> ${path ? pathString : ''}
+        <a href="/explorer">All</a> ${path ? pathString : ''}
       </p>
       ${path ? html`
         <${ExplorerNode} indent=${0} showTools=${true} gun=${gun} path=${this.props.node}/>
@@ -43,17 +50,22 @@ class Explorer extends View {
           ${chevronDown} Users
         </div>
         <div class="explorer-row" style="padding-left: 2em">
-          ${chevronDown} <a href="#/explorer/public%2F~${encodeURIComponent(Session.getPubKey())}">${Session.getPubKey()}</a>
+          ${chevronDown} <a href="/explorer/public%2F~${encodeURIComponent(Session.getPubKey())}">${Session.getPubKey()}</a>
         </div>
         <${ExplorerNode} indent=${3} gun=${State.public} path='public/~${Session.getPubKey()}'/>
         <div class="explorer-row" style="padding-left: 1em">
-          ${chevronRight} <a href="#/explorer/public%2F%23">#</a> (content-addressed values, such as public posts)
+          ${chevronRight} <a href="/explorer/public%2F%23">#</a> (content-addressed values, such as public posts)
         </div>
         <br/><br/>
         <div class="explorer-row">
           ${chevronDown} Local (only stored on your device)
         </div>
         <${ExplorerNode} indent=${1} gun=${State.local} path='local'/>
+        <br/><br/>
+        <div class="explorer-row">
+            ${chevronDown} Group (experimental, composite of all the users in your extended social network)
+        </div>
+        <${ExplorerNode} indent=${1} gun=${State.group()} path='group'/>
       `}
     `;
   }
@@ -63,7 +75,7 @@ class ExplorerNode extends Component {
   constructor() {
     super();
     this.eventListeners = {};
-    this.state = {children: {}, shownChildrenCount: 20};
+    this.state = {children: {}, shownChildrenCount: SHOW_CHILDREN_COUNT};
     this.children = {};
   }
 
@@ -88,7 +100,9 @@ class ExplorerNode extends Component {
 
   componentDidMount() {
     this.isMine = this.props.path.indexOf('public/~' + Session.getPubKey()) === 0;
-    this.getNode().map().on(async (v, k, c, e) => {
+    this.isGroup = this.props.path.indexOf('group') === 0;
+
+    const cb = async (v, k, c, e, from) => {
       if (k === '_') { return; }
       let encryption;
       if (typeof v === 'string' && v.indexOf('SEA{') === 0) {
@@ -113,9 +127,15 @@ class ExplorerNode extends Component {
       }
       this.eventListeners['n'] = e;
       const prev = this.children[k] || {};
-      this.children[k] = Object.assign(prev, { value: v, encryption });
+      this.children[k] = Object.assign(prev, { value: v, encryption, from });
       this.setState({children: this.children});
-    });
+    };
+
+    if (this.isGroup) {
+      this.props.gun.map(this.props.path.slice(6), cb); // TODO: make State.group() provide the normal gun api
+    } else {
+      this.getNode().map().on(cb);
+    }
   }
 
   onChildObjectClick(e, k) {
@@ -135,7 +155,7 @@ class ExplorerNode extends Component {
     return html`
       <div class="explorer-row" style="padding-left: ${this.props.indent}em">
         <span onClick=${e => this.onChildObjectClick(e, k)}>${this.state.children[k].open ? chevronDown : chevronRight}</span>
-        <a href="#/explorer/${encodeURIComponent(path)}"><b>${k}</b></a>
+        <a href="/explorer/${encodeURIComponent(path)}"><b>${k}</b></a>
       </div>
       ${this.state.children[k].open ? html`<${ExplorerNode} gun=${this.props.gun} indent=${this.props.indent + 1} path=${path}/>` : ''}
     `;
@@ -144,11 +164,12 @@ class ExplorerNode extends Component {
   renderChildValue(k, v) {
     let s;
     const encryption = this.children[k].encryption;
+    const from = this.children[k].from;
     const decrypted = encryption === 'Decrypted';
-    const lnk = (href, text) => html`<a class="mar-left5" href=${href}>${text}</a>`;
+    const lnk = (href, text, cls) => html`<a class=${cls === undefined ? "mar-left5" : cls} href=${href}>${text}</a>`;
     const keyLinks = html`
-      ${typeof k === 'string' && k.match(hashRegex) ? lnk(`#/post/${encodeURIComponent(k)}`, '#') : ''}
-      ${typeof k === 'string' && k.match(pubKeyRegex) ? lnk(`#/explorer/public%2F~${encodeURIComponent(encodeURIComponent(k))}`, html`<iris-text user=${k} path="profile/name"/>`) : ''}
+      ${typeof k === 'string' && k.match(hashRegex) ? lnk(`/post/${encodeURIComponent(k)}`, '#') : ''}
+      ${typeof k === 'string' && k.match(pubKeyRegex) ? lnk(`/explorer/public%2F~${encodeURIComponent(encodeURIComponent(k))}`, html`<iris-text user=${k} path="profile/name"/>`) : ''}
     `;
     if (encryption) {
       if (!decrypted) {
@@ -173,8 +194,9 @@ class ExplorerNode extends Component {
         }
 
         const valueLinks = html`
-          ${typeof v === 'string' && v.match(hashRegex) ? lnk(`#/post/${encodeURIComponent(v)}`, '#') : ''}
-          ${typeof v === 'string' && v.match(pubKeyRegex) ? lnk(`#/explorer/public%2F~${encodeURIComponent(encodeURIComponent(v))}`, html`<iris-text user=${v} path="profile/name"/>`) : ''}
+          ${typeof v === 'string' && v.match(hashRegex) ? lnk(`/post/${encodeURIComponent(v)}`, '#') : ''}
+          ${typeof v === 'string' && v.match(pubKeyRegex) ? lnk(`/explorer/public%2F~${encodeURIComponent(encodeURIComponent(v))}`, html`<iris-text user=${v} path="profile/name"/>`) : ''}
+          ${typeof from === 'string' ? html`<small> from ${lnk(`/explorer/public%2F~${encodeURIComponent(encodeURIComponent(from))}`, html`<iris-text user=${from} path="profile/name"/>`, '')}</small>` : ''}
         `;
 
         s = isMine ? html`
@@ -243,9 +265,6 @@ class ExplorerNode extends Component {
       });
     }
 
-    const childrenEl = this.props.indent === 0 ? html`<${ScrollViewport}>${renderChildren(children)}</${ScrollViewport}>`
-      : renderChildren(children.slice(0, this.state.shownChildrenCount));
-
     const showMoreBtn = children.length > this.state.shownChildrenCount;
     return html`
       ${this.props.indent === 0 ? html`
@@ -268,9 +287,9 @@ class ExplorerNode extends Component {
           ` : ''}
         </div>
       `: ''}
-      ${childrenEl}
+      ${renderChildren(children.slice(0, this.state.shownChildrenCount))}
       ${showMoreBtn ? html`
-        <a style="padding-left: ${this.props.indent + 1}em" href="" onClick=${e => {e.preventDefault();this.setState({shownChildrenCount: this.state.shownChildrenCount + 20})}}>More</a>
+        <a style="padding-left: ${this.props.indent + 1}em" href="" onClick=${e => {e.preventDefault();this.setState({shownChildrenCount: this.state.shownChildrenCount + SHOW_CHILDREN_COUNT})}}>More (${children.length - this.state.shownChildrenCount})</a>
       ` : ''}
     `;
   }
