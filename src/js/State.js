@@ -1,6 +1,5 @@
 import Gun from 'gun';
 import 'gun/sea';
-import 'gun/nts.js';
 import 'gun/lib/open';
 import 'gun/lib/radix';
 import 'gun/lib/radisk';
@@ -20,7 +19,7 @@ const State = {
     if (publicOpts && publicOpts.peers) {
       publicOpts.peers.forEach(url => PeerManager.addPeer({url}));
     }
-    this.local = Gun({peers: [], file: 'State.local', multicast:false}).get('state');
+    this.local = Gun({peers: [], file: 'State.local', multicast:false, localStorage: false}).get('state');
     if (Helpers.isElectron) {
       this.electron = Gun({peers: ['http://localhost:8768/gun'], file: 'State.electron', multicast:false, localStorage: false}).get('state');
     }
