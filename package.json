@@ -3,7 +3,7 @@
   "version": "2.1.1",
   "license": "MIT",
   "scripts": {
-    "build": "preact build --no-prerender",
+    "build": "webpack",
     "serve": "sirv build --port 8080 --cors --single",
     "dev": "preact watch --host localhost",
     "lint": "eslint src",
@@ -36,11 +36,15 @@
     "enzyme-adapter-preact-pure": "^3.1.0",
     "eslint": "^7.32.0",
     "eslint-config-preact": "^1.1.4",
+    "html-webpack-plugin": "5.5.0",
     "jest": "^27.0.6",
     "jest-preset-preact": "^4.0.5",
     "preact-cli": "^3.2.2",
     "sirv-cli": "1.0.14",
-    "webpack-build-notifier": "^2.3.0"
+    "ts-loader": "9.3.0",
+    "webpack": "5.73.0",
+    "webpack-build-notifier": "^2.3.0",
+    "webpack-cli": "4.10.0"
   },
   "dependencies": {
     "@zxing/library": "^0.18.6",
