@@ -7,6 +7,10 @@
     "jsxImportSource": "preact",
     "strict": true,
     "target": "es2020",
+    "allowJs": true,
     "moduleResolution": "node"
-  }
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
 }
