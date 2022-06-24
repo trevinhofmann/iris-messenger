@@ -1,12 +1,21 @@
 import { Component } from 'preact';
 import Helpers from '../Helpers';
-import { html } from 'htm/preact';
 import {translate as t} from '../Translation';
 import SafeImg from './SafeImg';
 import Identicon from './Identicon';
 import $ from 'jquery';
 
-class ProfilePhotoPicker extends Component {
+type Props = {
+
+};
+
+type State = {
+  preview: string | ArrayBuffer | null;
+};
+
+class ProfilePhotoPicker extends Component<Props, State> {
+  cropper: Cropper;
+
   async useProfilePhotoClicked() {
     let canvas = this.cropper.getCroppedCanvas();
     let resizedCanvas = document.createElement('canvas');
@@ -64,26 +73,26 @@ class ProfilePhotoPicker extends Component {
   }
 
   render() {
-    const currentPhotoEl = this.state.preview ?  '' : html`<${SafeImg} class="picker profile-photo" src=${this.props.currentPhoto} onClick=${() => this.clickProfilePhotoInput()}/>`;
-    const previewPhotoEl = this.state.preview ? html`<img id="profile-photo-preview" src=${this.state.preview}/>` : '';
-    const addProfilePhotoBtn = (this.props.currentPhoto || this.state.preview) ? '' : html`<div class="picker profile-photo"><${Identicon} str=${this.props.placeholder} width=250 onClick=${() => this.clickProfilePhotoInput()}/></div>`;
-    return html`
-      <div class="profile-photo-picker ${this.state.preview ? 'open' : ''}">
-        ${currentPhotoEl}
-        ${addProfilePhotoBtn}
+    const currentPhotoEl = this.state.preview ?  '' : <SafeImg className="picker profile-photo" src={this.props.currentPhoto} onClick={() => this.clickProfilePhotoInput()} />;
+    const previewPhotoEl = this.state.preview ? <img id="profile-photo-preview" src={this.state.preview} /> : '';
+    const addProfilePhotoBtn = (this.props.currentPhoto || this.state.preview) ? '' : html`<div className="picker profile-photo"><${Identicon} str=${this.props.placeholder} width=250 onClick=${() => this.clickProfilePhotoInput()}/></div>`;
+    return (
+      <div className="profile-photo-picker ${this.state.preview ? 'open' : ''}">
+        {currentPhotoEl}
+        {addProfilePhotoBtn}
         <div id="profile-photo-preview-container">
           ${previewPhotoEl}
         </div>
         <p>
-          <input name="profile-photo-input" type="file" class="hidden" id="profile-photo-input" onChange=${e => this.onProfilePhotoInputChange(e)} accept="image/*"/>
+          <input name="profile-photo-input" type="file" className="hidden" id="profile-photo-input" onChange={e => this.onProfilePhotoInputChange(e)} accept="image/*" />
         </p>
-        <p id="profile-photo-error" class="${this.state.hasError ? '' : 'hidden'}">${t('profile_photo_too_big')}</p>
-        <p class=${this.state.preview ? '' : 'hidden'}>
-          <button id="cancel-profile-photo" onClick=${() => this.cancelProfilePhotoClicked()}>${t('cancel')}</button>
-          <button id="use-profile-photo" onClick=${() => this.useProfilePhotoClicked()}>${t('use_photo')}</button>
+        <p id="profile-photo-error" className="${this.state.hasError ? '' : 'hidden'}">${t('profile_photo_too_big')}</p>
+        <p className={this.state.preview ? '' : 'hidden'}>
+          <button id="cancel-profile-photo" onClick={() => this.cancelProfilePhotoClicked()}>{t('cancel')}</button>
+          <button id="use-profile-photo" onClick={() => this.useProfilePhotoClicked()}>{t('use_photo')}</button>
         </p>
       </div>
-    `;
+    );
   }
 }
 
